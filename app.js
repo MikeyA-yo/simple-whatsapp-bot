@@ -1,4 +1,5 @@
 const puppeteer = require('puppeteer');
+const GroupChat = require('whatsapp-web.js/src/structures/GroupChat');
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -6,6 +7,7 @@ const puppeteer = require('puppeteer');
   });
   
   const { Client } = require('whatsapp-web.js');
+  const { GroupChat } = require('whatsapp-web.js')
   const qrcode = require('qrcode-terminal');
 const {lengthWords} = require('./word');
   const client = new Client({
@@ -13,6 +15,7 @@ const {lengthWords} = require('./word');
           browserWSEndpoint: await browser.wsEndpoint()
       }
   });
+  const group = new GroupChat();
 
   client.on('qr', (qr) => {
       // No need to handle QR code when using Puppeteer
@@ -22,7 +25,7 @@ const {lengthWords} = require('./word');
   client.on('ready', () => {
       console.log('Client is ready!');
   });
-
+let s = '!sticker' || '!s'
   client.on('message', async msg => {
       if (msg.body == '!ping') {
           msg.reply('pong');
@@ -30,22 +33,43 @@ const {lengthWords} = require('./word');
         msg.reply('o')
       }else if (msg.body.includes('!wordlength')){
         const body = msg.body.slice(12);
-        console.log(body)
         const length = await String(lengthWords(body));
-        console.log(length);
        await msg.reply(length);
-       (await msg.getChat()).sendMessage(length)
-      }else if (msg.body == ('!sticker' || '!s')) {
+      }else if (msg.body == s) {
              const chat = await msg.getChat();
            if (!msg.hasMedia){
                msg.reply('no pic provided')
            }else if (msg.hasMedia ){
             const media = await msg.downloadMedia();
             chat.sendMessage(media, {
-            sendMediaAsSticker: true
+            sendMediaAsSticker: true,
+            stickerAuthor: 'Mikey',
+            stickerName:'Bot'
            }) 
          }
+      }else if(msg.body == '!invite'){
+        //todo fix this crap
+        console.log(client.getInviteInfo())
+      try {
+        const inv = await group.getInviteCode()
+        
+        msg.reply(String(inv));
+      } catch (e) {
+        console.log(e.message)
       }
+      }else if (msg.body === '!everyone') {
+        const chat = await msg.getChat();
+        
+        let text = '';
+        let mentions = [];
+
+        for (let participant of chat.participants) {
+            mentions.push(`${participant.id.user}@c.us`);
+            text += `@${participant.id.user} `;
+        }
+
+        await chat.sendMessage(text, { mentions });
+    }
   });
 
   await client.initialize();
