@@ -27,6 +27,7 @@ const {lengthWords} = require('./word');
   });
 let s = '!sticker' || '!s'
   client.on('message', async msg => {
+   await  msg.react('😁');
       if (msg.body == '!ping') {
           msg.reply('pong');
       }else if (msg.body == '!x') {
@@ -48,12 +49,14 @@ let s = '!sticker' || '!s'
            }) 
          }
       }else if(msg.body == '!invite'){
-        //todo fix this crap
-        console.log(client.getInviteInfo())
+        //todo fix this crap /// done
       try {
-        const inv = await group.getInviteCode()
-        
-        msg.reply(String(inv));
+       const chat = await msg.getChat();
+       if (chat.isGroup){
+        const inv = await chat.name;
+        const inv2 = await chat.getInviteCode();
+        msg.reply(`${inv} : https://chat.whatsapp.com/${inv2}`);
+       }
       } catch (e) {
         console.log(e.message)
       }
