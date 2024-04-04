@@ -6,12 +6,14 @@ const GroupChat = require('whatsapp-web.js/src/structures/GroupChat');
     executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   });
   
-  const { Client } = require('whatsapp-web.js');
+  const { Client, NoAuth } = require('whatsapp-web.js');
   const { GroupChat } = require('whatsapp-web.js')
   const qrcode = require('qrcode-terminal');
 const {lengthWords} = require('./word');
-const {menu, say} = require('./menu');
+const {menu, say, generateMenu} = require('./menu');
+const {removeFunc} = require('./remove')
   const client = new Client({
+    authStrategy:new NoAuth(),
       puppeteer: {
           browserWSEndpoint: await browser.wsEndpoint()
       }
@@ -29,19 +31,8 @@ const {menu, say} = require('./menu');
 let s = '!sticker' || '!s'
   client.on('message', async msg => {
     if (msg.body.startsWith('!')) await  msg.react('😁');
-    if(msg.body == '!h' || msg.body == '!help' || msg.body == '!m'){
-      let commands;
-      menu.forEach(t =>{
-        commands += t
-        commands += '/\/->'
-      })
-      let text = `
-      Welcome, to this experiment,
-      let's build from here
-      commands🦾👇:
-      ${commands}
-      made with ❤🧡 by Ayomide(Mikey)
-      `
+    if(msg.body == '!h' || msg.body == '!help' || msg.body == '!m' || msg.body == '!menu'){
+      let text = generateMenu()
      msg.reply(text);
     }
       if (msg.body == '!ping') {
@@ -117,23 +108,25 @@ let s = '!sticker' || '!s'
       } catch (e) {
           msg.reply('That invite code seems to be invalid.');
       }
-    }else if (msg.body.startsWith('!add')){
-        const chat = await msg.getChat();
-        const numbers = msg.body.slice(5).split(" ");
-        numbers.forEach(no =>{
-          if(no.endsWith('@c.us')){
-            return no;
-          }else{
-            no +='@c.us';
-            return no;
+    }else if (msg.body.startsWith('!add')) {
+      const chat = await msg.getChat();
+      let numbers = msg.body.slice(5).split(" ");
+      numbers = numbers.map(no => {
+          if (!no.endsWith('@c.us')) {
+              return no + '@c.us';
           }
-        })
-       const result = await chat.addParticipants(numbers);
-       for (let i = 0; i < numbers.length; i++){
-        let user = result.numbers[i];
-        msg.reply(user.message);
-       } 
-    }else if (msg.body === '!groupinfo') {
+          return no;
+      });
+  
+      try {
+        const result = await chat.addParticipants(numbers);
+        msg.reply(result);
+        
+      } catch (e) {
+        msg.reply(e.message)
+      }
+  }
+  else if (msg.body === '!groupinfo') {
       let chat = await msg.getChat();
       if (chat.isGroup) {
           msg.reply(`
@@ -157,7 +150,52 @@ let s = '!sticker' || '!s'
              Owner: Mikey(A-yo)
              🙃🙃
          `);
-     }
+     }else if (msg.body.startsWith('!remove')) {
+      const chat = await msg.getChat();
+      const mentions = msg.getMentions();
+    
+          // Assuming you have a method to map contact name to phone number
+          
+          const phoneNumber = removeFunc(msg.body.slice(8), chat);
+          return phoneNumber + '@c.us';
+      
+  
+      if (numbers.length > 0) {
+          await chat.removeParticipants(numbers);
+          msg.reply('Participants removed from the group successfully!');
+        } else {
+          msg.reply('No valid mentions found!');
+       }
+    }else  if (msg.hasQuotedMsg && msg.body.startsWith('!remove')) {
+      const quotedMsg = await msg.getQuotedMessage();
+      
+      if (quotedMsg) {
+          const quotedSender = quotedMsg.from; // Get the sender of the quoted message
+          
+          // Extract the phone number from the message body
+          const phoneNumber = msg.body.slice(8).trim(); // Assuming "!remove" is 8 characters
+          
+          // Remove the participant using the provided phone number
+          const chat = await msg.getChat();
+          await chat.removeParticipants([phoneNumber + '@c.us']);
+          msg.reply('Participant removed from the group successfully!');
+      } else {
+          msg.reply('Quoted message not found!');
+      }
+   }else if (msg.hasQuotedMsg && msg.body.startsWith('!delete')) {
+    // Get the quoted message object
+    const quotedMsg = await msg.getQuotedMessage();
+    
+    if (quotedMsg) {
+        // Delete the quoted message
+        await quotedMsg.delete(true); // Passing true deletes the message for everyone
+        msg.reply('Quoted message deleted for everyone!');
+    } else {
+        msg.reply('Quoted message not found!');
+    }
+}
+  
+  
   });
 
   await client.initialize();

@@ -14,12 +14,25 @@ const menu = [
 ]
 function say(a){
   let b =  a.slice(10);
-  console.log(b)
   return b;
+}
+function generateMenu(){
+  let commands = '';
+  menu.forEach(t =>{
+    commands += t
+    commands += ' /\\/->  '
+  })
+  let text = `
+  Welcome, to this experiment,
+  let's build from here
+  commands🦾👇:
+  ${commands}
+  made with ❤ by Ayomide(Mikey)
+  `
+  return text;
 }
 module.exports={
     menu,
-    say
+    say,
+    generateMenu
 }
-
-say('!everyone hello');
