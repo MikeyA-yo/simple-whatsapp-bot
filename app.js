@@ -10,7 +10,7 @@ const GroupChat = require('whatsapp-web.js/src/structures/GroupChat');
   const { GroupChat } = require('whatsapp-web.js')
   const qrcode = require('qrcode-terminal');
 const {lengthWords} = require('./word');
-const {menu} = require('./menu');
+const {menu, say} = require('./menu');
   const client = new Client({
       puppeteer: {
           browserWSEndpoint: await browser.wsEndpoint()
@@ -87,9 +87,9 @@ let s = '!sticker' || '!s'
       } catch (e) {
         console.log(e.message)
       }
-      }else if (msg.body === '!everyone') {
+      }else if (msg.body.startsWith('!everyone')) {
         const chat = await msg.getChat();
-        let content = msg.body.slice(10);
+        let content = say(msg.body) ;
         let text = '';
         let mentions = [];
 

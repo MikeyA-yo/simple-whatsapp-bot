@@ -12,6 +12,14 @@ const menu = [
     '!info',
     '!groupinfo'
 ]
-module.exports={
-    menu
+function say(a){
+  let b =  a.slice(10);
+  console.log(b)
+  return b;
 }
+module.exports={
+    menu,
+    say
+}
+
+say('!everyone hello');
