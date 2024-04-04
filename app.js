@@ -27,7 +27,7 @@ const {lengthWords} = require('./word');
   });
 let s = '!sticker' || '!s'
   client.on('message', async msg => {
-   await  msg.react('😁');
+    if (msg.body.startsWith('!')) await  msg.react('😁');
       if (msg.body == '!ping') {
           msg.reply('pong');
       }else if (msg.body == '!x') {
