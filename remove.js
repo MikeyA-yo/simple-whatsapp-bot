@@ -5,7 +5,7 @@ function removeFunc(a,b){
     if (a == `@${p.id.user}`){
         number = p.id.user;
     }else{
-        number = 'invalid'
+        number = p.id.user;
     }
  });
  return number;

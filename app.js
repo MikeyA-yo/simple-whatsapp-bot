@@ -157,15 +157,14 @@ let s = '!sticker' || '!s'
           // Assuming you have a method to map contact name to phone number
           
           const phoneNumber = removeFunc(msg.body.slice(8), chat);
-          return phoneNumber + '@c.us';
+         let no = phoneNumber + '@c.us';
+         try {
+          await chat.removeParticipants([no]);
+          msg.reply('done');
+         } catch (error) {
+          msg.reply(error.message)
+         }
       
-  
-      if (numbers.length > 0) {
-          await chat.removeParticipants(numbers);
-          msg.reply('Participants removed from the group successfully!');
-        } else {
-          msg.reply('No valid mentions found!');
-       }
     }else  if (msg.hasQuotedMsg && msg.body.startsWith('!remove')) {
       const quotedMsg = await msg.getQuotedMessage();
       

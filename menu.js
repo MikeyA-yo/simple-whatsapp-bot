@@ -10,7 +10,9 @@ const menu = [
     '!join',
     '!add',
     '!info',
-    '!groupinfo'
+    '!groupinfo',
+    '!delete',
+    '!remove'
 ]
 function say(a){
   let b =  a.slice(10);
