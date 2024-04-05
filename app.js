@@ -11,7 +11,8 @@ const GroupChat = require('whatsapp-web.js/src/structures/GroupChat');
   const qrcode = require('qrcode-terminal');
 const {lengthWords} = require('./word');
 const {menu, say, generateMenu} = require('./menu');
-const {removeFunc} = require('./remove')
+const {removeFunc} = require('./remove');
+const {gifToSticker} = require('./sticker');
   const client = new Client({
     authStrategy:new NoAuth(),
       puppeteer: {
@@ -43,11 +44,11 @@ let s = '!sticker' || '!s'
         const body = msg.body.slice(12);
         const length = await String(lengthWords(body));
        await msg.reply(length);
-      }else if (msg.body == s) {
+      }else if (msg.body == s || msg.body == '!s') {
              const chat = await msg.getChat();
            if (!msg.hasMedia && !msg.hasQuotedMsg){
                msg.reply('no pic provided')
-           }else if (msg.hasMedia ){
+           }else if (msg.hasMedia && msg.type != 'image/gif'){
             const media = await msg.downloadMedia();
             chat.sendMessage(media, {
             sendMediaAsSticker: true,
@@ -57,13 +58,24 @@ let s = '!sticker' || '!s'
          }else if(msg.hasQuotedMsg){
           const quote = await msg.getQuotedMessage();
           if (!quote.hasMedia) msg.reply('no pic provided');
-          if(quote.hasMedia){
+          if(quote.hasMedia && quote.type != 'image/gif'){
+           try {
             const media = await quote.downloadMedia()
             chat.sendMessage(media, {
               sendMediaAsSticker: true,
               stickerAuthor: 'Mikey',
               stickerName:'Bot'
              })
+           } catch (e) {
+            msg.reply(e.message);
+           }
+          }
+         }else if(msg.hasMedia && msg.type == 'image/gif'){
+          gifToSticker(msg);
+         }else if(msg.hasQuotedMsg){
+          let qoute = await msg.getQuotedMessage();
+          if(qoute.hasMedia && qoute.type == 'image/gif'){
+            gifToSticker(qoute);
           }
          }
       }else if(msg.body == '!invite'){
@@ -121,7 +133,7 @@ let s = '!sticker' || '!s'
       try {
         const result = await chat.addParticipants(numbers);
         msg.reply(result);
-        
+        msg.reply('user added')
       } catch (e) {
         msg.reply(e.message)
       }
@@ -152,8 +164,8 @@ let s = '!sticker' || '!s'
          `);
      }else if (msg.body.startsWith('!remove')) {
       const chat = await msg.getChat();
-      const mentions = msg.getMentions();
-    
+      const mentions = await msg.getMentions();
+      console.log(mentions.number, mentions.id._serialised);
           // Assuming you have a method to map contact name to phone number
           
           const phoneNumber = removeFunc(msg.body.slice(8), chat);
@@ -172,12 +184,16 @@ let s = '!sticker' || '!s'
           const quotedSender = quotedMsg.from; // Get the sender of the quoted message
           
           // Extract the phone number from the message body
-          const phoneNumber = msg.body.slice(8).trim(); // Assuming "!remove" is 8 characters
+          const phoneNumber = quotedSender; // Assuming "!remove" is 8 characters
           
-          // Remove the participant using the provided phone number
-          const chat = await msg.getChat();
-          await chat.removeParticipants([phoneNumber + '@c.us']);
-          msg.reply('Participant removed from the group successfully!');
+         try {
+           // Remove the participant using the provided phone number
+           const chat = await msg.getChat();
+           await chat.removeParticipants([phoneNumber + '@c.us']);
+           msg.reply('Participant removed from the group successfully!');
+         } catch (e) {
+            msg.reply(e.message)
+         }
       } else {
           msg.reply('Quoted message not found!');
       }
@@ -187,8 +203,12 @@ let s = '!sticker' || '!s'
     
     if (quotedMsg) {
         // Delete the quoted message
+       try {
         await quotedMsg.delete(true); // Passing true deletes the message for everyone
-        msg.reply('Quoted message deleted for everyone!');
+        msg.reply('deleted');
+       } catch (e) {
+        msg.reply(e.message)
+       }
     } else {
         msg.reply('Quoted message not found!');
     }

@@ -4,8 +4,6 @@ function removeFunc(a,b){
  participants.forEach(p => {
     if (a == `@${p.id.user}`){
         number = p.id.user;
-    }else{
-        number = p.id.user;
     }
  });
  return number;
