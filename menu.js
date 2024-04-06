@@ -22,13 +22,13 @@ function generateMenu(){
   let commands = '';
   menu.forEach(t =>{
     commands += t
-    commands += ' /\\/->  '
+    commands += ' 𖣘  '
   })
   let text = `
   Welcome, to this experiment,
-  let's build from here
+  let's build from here\n
   commands🦾👇:
-  ${commands}
+  ${commands}\n
   made with ❤ by Ayomide(Mikey)
   `
   return text;
