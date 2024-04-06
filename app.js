@@ -233,22 +233,21 @@ let s = '!sticker' || '!s'
 // Extract the participant name or phone number const participant = participants.find(participant => participant.id.user === phoneNumber);
 const participantName = chat.participants.find(participant => participant.id.user === participantNumber) ?? participantNumber.substring(0, 13);
 const taggedParticipant = `@${participantName}`;
-
 // Send a greeting message mentioning the participant
-notification.reply(`Yo ${taggedParticipant}, it's your favorite cyborg Mikey greeting!`);
+notification.reply(`Yo , @${notification.id.participant.substring(0,13)} it's your favorite cyborg Mikey greeting!`, {mentions: [notification.id.participant]});
 // let newMembers = await notification.getChat().participants;
 // let unique;
 // newMembers.forEach(n =>{
 //   if(!members.includes(n)) unique = n;
 // })
  let b = `@${notification.id.participant.substring(0, 13)}`
- notification.reply(`yo ${b} it's your favorite cyborg Mikey greeting`);
+ notification.reply(`yo ${b} it's your favorite cyborg Mikey greeting`, {mentions: [notification.id.participant]});
  });
  client.on('group_leave', (notification) => {
   // User has left or been kicked from the group.
   console.log('leave', notification);
   let b = `@${notification.id.participant.substring(0, 13)}`
-  notification.reply(`Sayonara ${b}.`);
+  notification.reply(`Sayonara ${b}, @${notification.id.participant}.`, {mentions: [notification.id.participant]});
 });
 client.on('group_admin_changed', (notification) => {
   if (notification.type === 'promote') {
@@ -256,9 +255,11 @@ client.on('group_admin_changed', (notification) => {
         * Emitted when a current user is promoted to an admin.
         * {@link notification.author} is a user who performs the action of promoting/demoting the current user.
         */
+       notification.reply(`You were promoted by ${notification.author}`)
       console.log(`You were promoted by ${notification.author}`);
   } else if (notification.type === 'demote')
       /** Emitted when a current user is demoted to a regular user. */
+      notification.reply(`You were demoted by ${notification.author}`)
       console.log(`You were demoted by ${notification.author}`);
 });
 
