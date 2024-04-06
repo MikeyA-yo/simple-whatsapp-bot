@@ -5,8 +5,8 @@ const GroupChat = require('whatsapp-web.js/src/structures/GroupChat');
   const browser = await puppeteer.launch({
     executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   });
-  
-  const { Client, NoAuth } = require('whatsapp-web.js');
+ let members; 
+  const { Client, LocalAuth } = require('whatsapp-web.js');
   const { GroupChat } = require('whatsapp-web.js')
   const qrcode = require('qrcode-terminal');
 const {lengthWords} = require('./word');
@@ -14,7 +14,7 @@ const {menu, say, generateMenu} = require('./menu');
 const {removeFunc} = require('./remove');
 const {gifToSticker} = require('./sticker');
   const client = new Client({
-    authStrategy:new NoAuth(),
+    authStrategy:new LocalAuth(),
       puppeteer: {
           browserWSEndpoint: await browser.wsEndpoint()
       }
@@ -31,7 +31,10 @@ const {gifToSticker} = require('./sticker');
   });
 let s = '!sticker' || '!s'
   client.on('message', async msg => {
+    let b = await msg.getChat();
+    members = b.participants;
     if (msg.body.startsWith('!')) await  msg.react('😁');
+    
     if(msg.body == '!h' || msg.body == '!help' || msg.body == '!m' || msg.body == '!menu'){
       let text = generateMenu()
      msg.reply(text);
@@ -75,7 +78,11 @@ let s = '!sticker' || '!s'
          }else if(msg.hasQuotedMsg){
           let qoute = await msg.getQuotedMessage();
           if(qoute.hasMedia && qoute.type == 'image/gif'){
-            gifToSticker(qoute);
+            try {
+              gifToSticker(qoute);
+            } catch (error) {
+              msg.reply(error.message)
+            }
           }
          }
       }else if(msg.body == '!invite'){
@@ -165,7 +172,7 @@ let s = '!sticker' || '!s'
      }else if (msg.body.startsWith('!remove')) {
       const chat = await msg.getChat();
       const mentions = await msg.getMentions();
-      console.log(mentions.number, mentions.id._serialised);
+      console.log(mentions.number);
           // Assuming you have a method to map contact name to phone number
           
           const phoneNumber = removeFunc(msg.body.slice(8), chat);
@@ -212,10 +219,48 @@ let s = '!sticker' || '!s'
     } else {
         msg.reply('Quoted message not found!');
     }
-}
+  }
   
   
-  });
+ });
+ client.on('group_join',async (notification) => {
+  // User has joined or been added to the group.
+  notification.reply('joined message starts')
+  console.log('join', notification);
+  const chat = await notification.getChat();
+ const participantNumber = notification.id.participant;
+ 
+// Extract the participant name or phone number const participant = participants.find(participant => participant.id.user === phoneNumber);
+const participantName = chat.participants.find(participant => participant.id.user === participantNumber) ?? participantNumber.substring(0, 13);
+const taggedParticipant = `@${participantName}`;
+
+// Send a greeting message mentioning the participant
+notification.reply(`Yo ${taggedParticipant}, it's your favorite cyborg Mikey greeting!`);
+// let newMembers = await notification.getChat().participants;
+// let unique;
+// newMembers.forEach(n =>{
+//   if(!members.includes(n)) unique = n;
+// })
+ let b = `@${notification.id.participant.substring(0, 13)}`
+ notification.reply(`yo ${b} it's your favorite cyborg Mikey greeting`);
+ });
+ client.on('group_leave', (notification) => {
+  // User has left or been kicked from the group.
+  console.log('leave', notification);
+  let b = `@${notification.id.participant.substring(0, 13)}`
+  notification.reply(`Sayonara ${b}.`);
+});
+client.on('group_admin_changed', (notification) => {
+  if (notification.type === 'promote') {
+      /** 
+        * Emitted when a current user is promoted to an admin.
+        * {@link notification.author} is a user who performs the action of promoting/demoting the current user.
+        */
+      console.log(`You were promoted by ${notification.author}`);
+  } else if (notification.type === 'demote')
+      /** Emitted when a current user is demoted to a regular user. */
+      console.log(`You were demoted by ${notification.author}`);
+});
 
   await client.initialize();
 })();
