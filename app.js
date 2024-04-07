@@ -51,7 +51,7 @@ let s = '!sticker' || '!s'
              const chat = await msg.getChat();
            if (!msg.hasMedia && !msg.hasQuotedMsg){
                msg.reply('no pic provided')
-           }else if (msg.hasMedia && msg.type != 'image/gif'){
+           }else if (msg.hasMedia && msg.type == 'image'){
             const media = await msg.downloadMedia();
             chat.sendMessage(media, {
             sendMediaAsSticker: true,
@@ -61,7 +61,7 @@ let s = '!sticker' || '!s'
          }else if(msg.hasQuotedMsg){
           const quote = await msg.getQuotedMessage();
           if (!quote.hasMedia) msg.reply('no pic provided');
-          if(quote.hasMedia && quote.type != 'image/gif'){
+          if(quote.hasMedia && quote.type == 'image'){
            try {
             const media = await quote.downloadMedia()
             chat.sendMessage(media, {
@@ -228,6 +228,13 @@ let s = '!sticker' || '!s'
        }
     } else {
         msg.reply('Quoted message not found!');
+    }
+  }else if(msg.body.startsWith('!type')){
+    if(msg.hasQuotedMsg){
+      let quote = await msg.getQuotedMessage();
+      msg.reply(quote.type);
+    }else{
+      msg.reply(msg.type);
     }
   }
   
