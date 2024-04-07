@@ -1,4 +1,5 @@
 // const Jimp = require('jimp');
+const { MessageMedia } = require('whatsapp-web.js');
 const fetch = require('node-fetch');
 const {exec} = require('node:child_process');
 // const fs = require('fs');
@@ -7,29 +8,32 @@ const {exec} = require('node:child_process');
 async function gifToSticker(m) {
     if (m.hasMedia && m.type == 'image/gif') {
         try {
+            const chat =  await m.getChat()
             // Fetch the GIF data
             const gifRes = await fetch(m.mediaUrl);
             const gifData = await gifRes.buffer();
             fs.writeFileSync('input.gif', gifData);
+            const med = new MessageMedia.fromFilePath('./input.gif');
+            await chat.sendMessage(med);
 
-            // Convert the GIF file to WebP format using FFmpeg
-            exec('ffmpeg -i input.gif -vf "scale=512:-1" -vcodec libwebp -lossless 1 output.png', async (error, stdout, stderr) => {
-                if (error) {
-                    msg.reply(`Conversion error: ${error.message}`);
-                    return;
-                }
+            // // Convert the GIF file to WebP format using FFmpeg
+            // exec('ffmpeg -i input.gif -vf "scale=512:-1" -vcodec libwebp -lossless 1 output.png', async (error, stdout, stderr) => {
+            //     if (error) {
+            //         msg.reply(`Conversion error: ${error.message}`);
+            //         return;
+            //     }
 
-                // Read the converted WebP file
-                const webpData = fs.readFileSync('output.png');
+            //     // Read the converted WebP file
+            //     const webpData = fs.readFileSync('output.png');
 
-                // Send the WebP file as a sticker
-                const chat = await msg.getChat();
-                chat.sendImageAsSticker(webpData, { keepScale: true });
+            //     // Send the WebP file as a sticker
+            //     const chat = await msg.getChat();
+            //     chat.sendImageAsSticker(webpData, { keepScale: true });
 
-                // Clean up the temporary files
-                fs.unlinkSync('input.gif');
-                fs.unlinkSync('output.webp');
-            });
+            //     // Clean up the temporary files
+            //     fs.unlinkSync('input.gif');
+            //     fs.unlinkSync('output.webp');
+            // });
             // Write GIF data to a temporary file
             // fs.writeFileSync('input.gif', gifData);
 

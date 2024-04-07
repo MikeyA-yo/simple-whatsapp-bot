@@ -5,13 +5,13 @@ const GroupChat = require('whatsapp-web.js/src/structures/GroupChat');
   const browser = await puppeteer.launch({
     executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
   });
- let members; 
+
   const { Client, LocalAuth } = require('whatsapp-web.js');
   const { GroupChat } = require('whatsapp-web.js')
   const qrcode = require('qrcode-terminal');
 const {lengthWords} = require('./word');
 const {menu, say, generateMenu} = require('./menu');
-const {removeFunc} = require('./remove');
+const {removeFunc, mikey} = require('./remove');
 const {gifToSticker} = require('./sticker');
   const client = new Client({
     authStrategy:new LocalAuth(),
@@ -20,7 +20,9 @@ const {gifToSticker} = require('./sticker');
       }
   });
   const group = new GroupChat();
-
+ module.exports = {
+  client
+ }
   client.on('qr', (qr) => {
       // No need to handle QR code when using Puppeteer
       qrcode.generate(qr, {small: true});
@@ -31,8 +33,6 @@ const {gifToSticker} = require('./sticker');
   });
 let s = '!sticker' || '!s'
   client.on('message', async msg => {
-    let b = await msg.getChat();
-    members = b.participants;
     if (msg.body.startsWith('!')) await  msg.react('😁');
     
     if(msg.body == '!h' || msg.body == '!help' || msg.body == '!m' || msg.body == '!menu'){
@@ -43,7 +43,7 @@ let s = '!sticker' || '!s'
           msg.reply('pong');
       }else if (msg.body == '!x') {
         msg.reply('o')
-      }else if (msg.body.includes('!wordlength')){
+      }else if (msg.body.startsWith('!wordlength')){
         const body = msg.body.slice(12);
         const length = await String(lengthWords(body));
        await msg.reply(length);
@@ -72,17 +72,6 @@ let s = '!sticker' || '!s'
            } catch (e) {
             msg.reply(e.message);
            }
-          }
-         }else if(msg.hasMedia && msg.type == 'image/gif'){
-          gifToSticker(msg);
-         }else if(msg.hasQuotedMsg){
-          let qoute = await msg.getQuotedMessage();
-          if(qoute.hasMedia && qoute.type == 'image/gif'){
-            try {
-              gifToSticker(qoute);
-            } catch (error) {
-              msg.reply(error.message)
-            }
           }
          }
       }else if(msg.body == '!invite'){
@@ -113,12 +102,17 @@ let s = '!sticker' || '!s'
         await chat.sendMessage(thing, { mentions });
     } else if (msg.body === '!leave') {
       // Leave the group
+      let contact = await msg.getContact()
+    if(contact.number != mikey){
+      msg.reply('you are not permitted')
+    }else{
       let chat = await msg.getChat();
       if (chat.isGroup) {
           chat.leave();
       } else {
           msg.reply('This command can only be used in a group!');
       }
+    }
     } else if (msg.body.startsWith('!join ')) {
       const inviteCode = msg.body.split(' ')[1].substring(26);
       try {
@@ -129,6 +123,8 @@ let s = '!sticker' || '!s'
       }
     }else if (msg.body.startsWith('!add')) {
       const chat = await msg.getChat();
+      let contact = await msg.getContact()
+      console.log(contact.number);
       let numbers = msg.body.slice(5).split(" ");
       numbers = numbers.map(no => {
           if (!no.endsWith('@c.us')) {
@@ -138,9 +134,18 @@ let s = '!sticker' || '!s'
       });
   
       try {
-        const result = await chat.addParticipants(numbers);
-        msg.reply(result);
-        msg.reply('user added')
+        if(msg.body.length < 15){
+          msg.reply('invalid');
+        }else{
+          if (contact.number == mikey){
+            const result = await chat.addParticipants(numbers);
+            msg.reply(result.message);
+            msg.reply('user added')
+          }
+          else{
+            msg.reply("don't ban my bot please")
+          }
+        }
       } catch (e) {
         msg.reply(e.message)
       }
@@ -172,14 +177,19 @@ let s = '!sticker' || '!s'
      }else if (msg.body.startsWith('!remove')) {
       const chat = await msg.getChat();
       const mentions = await msg.getMentions();
+      const contact = await msg.getContact();
       console.log(mentions.number);
           // Assuming you have a method to map contact name to phone number
           
-          const phoneNumber = removeFunc(msg.body.slice(8), chat);
+         const phoneNumber = removeFunc(msg.body.slice(8), chat);
          let no = phoneNumber + '@c.us';
          try {
-          await chat.removeParticipants([no]);
-          msg.reply('done');
+          if(contact.number == mikey){
+            await chat.removeParticipants([no]);
+             msg.reply('done');
+          }else{
+            msg.reply('not allowed for this process');
+          }
          } catch (error) {
           msg.reply(error.message)
          }
@@ -225,16 +235,15 @@ let s = '!sticker' || '!s'
  });
  client.on('group_join',async (notification) => {
   // User has joined or been added to the group.
-  notification.reply('joined message starts')
-  console.log('join', notification);
-  const chat = await notification.getChat();
- const participantNumber = notification.id.participant;
+  // console.log('join', notification);
+  //const chat = await notification.getChat();
+ //const participantNumber = notification.id.participant;
  
 // Extract the participant name or phone number const participant = participants.find(participant => participant.id.user === phoneNumber);
-const participantName = chat.participants.find(participant => participant.id.user === participantNumber) ?? participantNumber.substring(0, 13);
-const taggedParticipant = `@${participantName}`;
+//const participantName = chat.participants.find(participant => participant.id.user === participantNumber) ?? participantNumber.substring(0, 13);
+// const taggedParticipant = `@${participantName}`;
 // Send a greeting message mentioning the participant
-notification.reply(`Yo , @${notification.id.participant.substring(0,13)} it's your favorite cyborg Mikey greeting!`, {mentions: [notification.id.participant]});
+// notification.reply(`Yo , @${notification.id.participant.substring(0,13)} it's your favorite cyborg Mikey greeting!`, {mentions: [notification.id.participant]});
 // let newMembers = await notification.getChat().participants;
 // let unique;
 // newMembers.forEach(n =>{
@@ -245,9 +254,9 @@ notification.reply(`Yo , @${notification.id.participant.substring(0,13)} it's yo
  });
  client.on('group_leave', (notification) => {
   // User has left or been kicked from the group.
-  console.log('leave', notification);
+  // console.log('leave', notification);
   let b = `@${notification.id.participant.substring(0, 13)}`
-  notification.reply(`Sayonara ${b}, @${notification.id.participant}.`, {mentions: [notification.id.participant]});
+  notification.reply(`Sayonara ${b}.`, {mentions: [notification.id.participant]});
 });
 client.on('group_admin_changed', (notification) => {
   if (notification.type === 'promote') {
@@ -256,7 +265,7 @@ client.on('group_admin_changed', (notification) => {
         * {@link notification.author} is a user who performs the action of promoting/demoting the current user.
         */
        notification.reply(`You were promoted by ${notification.author}`)
-      console.log(`You were promoted by ${notification.author}`);
+      console.log(`You were promoted by ${notification.author}`, notification);
   } else if (notification.type === 'demote')
       /** Emitted when a current user is demoted to a regular user. */
       notification.reply(`You were demoted by ${notification.author}`)

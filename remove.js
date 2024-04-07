@@ -1,3 +1,4 @@
+let mikey = '2348089132385'
 function removeFunc(a,b){
  let participants = b.participants;
  let number;
@@ -10,4 +11,5 @@ function removeFunc(a,b){
 }
 module.exports = {
     removeFunc,
+    mikey
 }
