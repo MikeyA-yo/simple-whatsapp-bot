@@ -12,7 +12,8 @@ const menu = [
     '!info',
     '!groupinfo',
     '!delete',
-    '!remove'
+    '!remove',
+    '!type'
 ]
 function say(a){
   let b =  a.slice(10);
