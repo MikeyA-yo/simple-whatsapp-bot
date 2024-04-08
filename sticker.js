@@ -2,19 +2,24 @@
 const { MessageMedia } = require('whatsapp-web.js');
 const fetch = require('node-fetch');
 const {exec} = require('node:child_process');
-// const fs = require('fs');
+ const fs = require('fs');
 // const { convert } = require('./converter');
 
 async function gifToSticker(m) {
-    if (m.hasMedia && m.type == 'image/gif') {
+    if (m.hasMedia && m.type == 'video') {
         try {
-            const chat =  await m.getChat()
+            const chat =  await m.getChat();
+            const media = await m.downloadMedia();
+            const bin = Buffer.from(media.data, 'base64');
             // Fetch the GIF data
-            const gifRes = await fetch(m.mediaUrl);
-            const gifData = await gifRes.buffer();
-            fs.writeFileSync('input.gif', gifData);
-            const med = new MessageMedia.fromFilePath('./input.gif');
-            await chat.sendMessage(med);
+            // const gifRes = await fetch(m.mediaUrl);
+            // const gifData = await gifRes.buffer();
+            //  fs.writeFileSync('input.mp4', media.data);
+            // const med = new MessageMedia.fromFilePath('./input.mp4');
+            console.log(m)
+            await chat.sendMessage(media, {
+                sendVideoAsGif:true
+            });
 
             // // Convert the GIF file to WebP format using FFmpeg
             // exec('ffmpeg -i input.gif -vf "scale=512:-1" -vcodec libwebp -lossless 1 output.png', async (error, stdout, stderr) => {

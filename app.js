@@ -74,6 +74,23 @@ let s = '!sticker' || '!s'
            }
           }
          }
+      }else if(msg.body == '!s-g' || msg.body == '!sticker-g') {
+       if(msg.type == 'video'){
+        try {
+          gifToSticker(msg);
+        } catch (e) {
+          msg.reply(e.message);
+        }
+       }else if(msg.hasQuotedMsg){
+        const q = await msg.getQuotedMessage()
+        if(q.type == 'video'){
+          try {
+            gifToSticker(q);
+          } catch (e) {
+            msg.reply(e.message);
+          }
+        }
+       }
       }else if(msg.body == '!invite'){
         //todo fix this crap /// done
       try {
