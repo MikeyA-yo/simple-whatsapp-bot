@@ -17,6 +17,11 @@ const {gifToSticker} = require('./sticker');
     authStrategy:new LocalAuth(),
       puppeteer: {
           browserWSEndpoint: await browser.wsEndpoint()
+      },
+      webVersion: '2.2409.2',
+      webVersionCache: {
+        type: 'remote',
+        remotePath: 'https://raw.githubusercontent.com/wppconnect-team/wa-version/main/html/2.2409.2.html'
       }
   });
   const group = new GroupChat();

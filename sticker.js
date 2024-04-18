@@ -2,6 +2,7 @@
 const { MessageMedia } = require('whatsapp-web.js');
 const fetch = require('node-fetch');
 const {exec} = require('node:child_process');
+var ffmpeg = require('fluent-ffmpeg');
  const fs = require('fs');
 // const { convert } = require('./converter');
 
@@ -14,12 +15,36 @@ async function gifToSticker(m) {
             // Fetch the GIF data
             // const gifRes = await fetch(m.mediaUrl);
             // const gifData = await gifRes.buffer();
-            //  fs.writeFileSync('input.mp4', media.data);
-            // const med = new MessageMedia.fromFilePath('./input.mp4');
-            console.log(m)
+            fs.writeFileSync('input.mp4', bin);
+            ffmpeg('./input.mp4')
+            .size('?x320') 
+            .videoBitrate('500k')
+            .fps(10) 
+            .outputOptions('-crf 28')
+            .save('output.webp')
+            .on('end', async () =>{
+                const webpData = fs.readFileSync('./output.webp');
+                const media = new MessageMedia('image/webp', webpData);
+
+                                    try {
+                                        await msg.reply(media, null, { sendMediaAsSticker: true });
+                                        fs.unlinkSync(videoPath);
+                                        fs.unlinkSync(webpPath);
+                                    } catch (error) {
+                                        msg.reply('Error sending sticker ', error.message);
+                                    }
+            })
+            const mm =  MessageMedia.fromFilePath('./input.mp4');
+            
             await chat.sendMessage(media, {
                 sendVideoAsGif:true
             });
+            await chat.sendMessage(mm, {
+                sendMediaAsSticker: true,
+                stickerName: "Sticker Name",
+                stickerAuthor: "Author Name",   
+            });
+            fs.unlinkSync('input.mp4');
 
             // // Convert the GIF file to WebP format using FFmpeg
             // exec('ffmpeg -i input.gif -vf "scale=512:-1" -vcodec libwebp -lossless 1 output.png', async (error, stdout, stderr) => {
