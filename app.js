@@ -14,7 +14,9 @@ const {menu, say, generateMenu} = require('./menu');
 const {removeFunc, mikey} = require('./remove');
 const {gifToSticker} = require('./sticker');
   const client = new Client({
-    authStrategy:new LocalAuth(),
+    authStrategy:new LocalAuth({
+      dataPath: "..Cache/Clients/Client1"
+    }),
       puppeteer: {
           browserWSEndpoint: await browser.wsEndpoint()
       },
@@ -32,6 +34,9 @@ const {gifToSticker} = require('./sticker');
       // No need to handle QR code when using Puppeteer
       qrcode.generate(qr, {small: true});
   });
+  client.on("authenticated", () => {
+    console.log("Authentication successful");
+});
 
   client.on('ready', () => {
       console.log('Client is ready!');
