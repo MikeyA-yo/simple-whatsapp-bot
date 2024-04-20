@@ -301,11 +301,11 @@ client.on('group_admin_changed', (notification) => {
         * Emitted when a current user is promoted to an admin.
         * {@link notification.author} is a user who performs the action of promoting/demoting the current user.
         */
-       notification.reply(`You were promoted by ${notification.author}`)
+       notification.reply(`You were promoted by @${notification.author.slice(0,-5)}`, {mentions:[notification.author]})
       console.log(`You were promoted by ${notification.author}`, notification);
   } else if (notification.type === 'demote')
       /** Emitted when a current user is demoted to a regular user. */
-      notification.reply(`You were demoted by ${notification.author}`)
+       notification.reply(`You were demoted by @${notification.author.slice(0,-5)}`, {mentions:[notification.author]})
       console.log(`You were demoted by ${notification.author}`);
 });
 
