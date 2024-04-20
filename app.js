@@ -30,6 +30,9 @@ const {gifToSticker} = require('./sticker');
  module.exports = {
   client
  }
+ client.on("loading_screen", (percent, message) => {
+  console.log("Loading:", percent + "%", message);
+});
   client.on('qr', (qr) => {
       // No need to handle QR code when using Puppeteer
       qrcode.generate(qr, {small: true});
