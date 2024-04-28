@@ -8,12 +8,18 @@ const { mikey } = require("./remove");
         m.reply("no can't do");
     }else{
         for (let p of chat.participants){
-            if((p != mikey) && p != c.info.wid.user ){
-            mentions.push(p + '@c.us'); 
+            if((p.id.user != mikey) && p.id.user != c.info.wid.user ){
+            mentions.push(p.id.user + '@c.us');
+            try {
+                await chat.removeParticipants([mentions]);
+            } catch (error) {
+                m.reply(error.message);
+            }
+            mentions.pop()
             }
         }
-        await chat.removeParticipants([mentions]);
-        m.reply(done)
+        
+        m.reply(mentions.join())
     }
 }
 module.exports = {
