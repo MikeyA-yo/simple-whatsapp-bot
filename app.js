@@ -1,5 +1,6 @@
 const puppeteer = require('puppeteer');
 const GroupChat = require('whatsapp-web.js/src/structures/GroupChat');
+const { removeAll } = require('./remove-all');
 
 (async () => {
   const browser = await puppeteer.launch({
@@ -204,7 +205,7 @@ let s = '!sticker' || '!s'
              Owner: Mikey(A-yo)
              🙃🙃
          `);
-     }else if (msg.body.startsWith('!remove')) {
+     }else if (msg.body.startsWith('!remove ')) {
       const chat = await msg.getChat();
       const mentions = await msg.getMentions();
       const contact = await msg.getContact();
@@ -224,7 +225,7 @@ let s = '!sticker' || '!s'
           msg.reply(error.message)
          }
       
-    }else  if (msg.hasQuotedMsg && msg.body.startsWith('!remove')) {
+    }else  if (msg.hasQuotedMsg && msg.body.startsWith('!remove ')) {
       const quotedMsg = await msg.getQuotedMessage();
       
       if (quotedMsg) {
@@ -265,6 +266,12 @@ let s = '!sticker' || '!s'
       msg.reply(quote.type);
     }else{
       msg.reply(msg.type);
+    }
+  }else if(msg.body == '!remove-all'){
+    try {
+      removeAll(msg, client);
+    } catch (error) {
+      msg.reply(error.message)
     }
   }
   
