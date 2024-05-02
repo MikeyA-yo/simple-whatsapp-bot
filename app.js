@@ -1,7 +1,7 @@
 const puppeteer = require('puppeteer');
 const GroupChat = require('whatsapp-web.js/src/structures/GroupChat');
 const { removeAll } = require('./remove-all');
-
+//browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
     executablePath: 'C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe',
@@ -19,7 +19,7 @@ const {gifToSticker} = require('./sticker');
       dataPath: "..Cache/Clients/Client1"
     }),
       puppeteer: {
-          browserWSEndpoint: await browser.wsEndpoint()
+          headless:false
       },
       webVersion: '2.2409.2',
       webVersionCache: {

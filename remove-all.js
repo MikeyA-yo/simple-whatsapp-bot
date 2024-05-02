@@ -19,7 +19,7 @@ const { mikey } = require("./remove");
             }
         }
         
-        m.reply(mentions.join())
+        m.reply('purged')
     }
 }
 module.exports = {

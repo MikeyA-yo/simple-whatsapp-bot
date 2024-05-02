@@ -1,19 +1,23 @@
 const menu = [
+    '------General------\n',
     '!m',
     '!sticker',
+    "!sticker-g",
     '!everyone',
-    '!add',
     '!wordlength',
     '!invite',
     '!ping',
+    '!type',
+    '------Owner--------\n',
     '!leave',
     '!join',
     '!add',
-    '!info',
-    '!groupinfo',
     '!delete',
     '!remove',
-    '!type'
+    '!remove-all',
+    '-------Info--------\n',
+    '!info',
+    '!groupinfo',
 ]
 function say(a){
   let b =  a.slice(10);

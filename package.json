@@ -6,7 +6,9 @@
   "dependencies": {
     "jimp": "^0.22.12",
     "qrcode-terminal": "latest",
-    "whatsapp-web.js": "1.23.0"
+    "whatsapp-web.js": "1.23.0",
+    "yt-search": "^2.10.4",
+    "ytdl-core": "^4.11.5"
   },
   "devDependencies": {},
   "scripts": {
