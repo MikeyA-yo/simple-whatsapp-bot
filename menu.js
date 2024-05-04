@@ -1,5 +1,5 @@
 const menu = [
-    '------General------\n',
+    '\n------General------\n',
     '!m',
     '!sticker',
     "!sticker-g",
@@ -8,14 +8,14 @@ const menu = [
     '!invite',
     '!ping',
     '!type',
-    '------Owner--------\n',
+    '\n------Owner--------\n',
     '!leave',
     '!join',
     '!add',
     '!delete',
     '!remove',
     '!remove-all',
-    '-------Info--------\n',
+    '\n-------Info--------\n',
     '!info',
     '!groupinfo',
 ]
