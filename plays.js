@@ -2,6 +2,10 @@ const yt = require('ytdl-core');
 const yts = require('yt-search')
 const fs = require('fs');
 const { MessageMedia } = require('whatsapp-web.js');
+function createVid(url, n){
+    let b = `./${n}.mp4`
+    yt(url, {filter: "audioandvideo", quality:"lowest"}).pipe(fs.createWriteStream(b));
+}
 async function video(m, name){
    const chat = await m.getChat();
    const info = await yts(name);
@@ -10,15 +14,18 @@ async function video(m, name){
    for(let i = 0; i < info.all.length; i++){
     if (info.all[i].type == "video"){
          url = info.all[i].url;
-         n = info.all[i].name ?? 'data';
+         let c = info.all[i].title
+         //b.split(" ").join() ??
+         n = c ?? name;
+         let b = `./${n}.mp4`
+         await createVid(url, n);
          try {
-            yt(url, {filter: "audioandvideo", quality:"lowestaudio"}).pipe(fs.createWriteStream(`${n}.mp4`));
-            const media = await  MessageMedia.fromFilePath(`${n}.mp4`)
-            await m.reply(media, {
+            const media = await  MessageMedia.fromFilePath(b)
+            await chat.sendMessage(media,{
                 sendMediaAsDocument: true,
                 caption:n
             })
-            fs.unlinkSync(`${n}.mp4`)
+          
            } catch (error) {
             m.reply(error.message);
            }

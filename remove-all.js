@@ -13,7 +13,7 @@ const { mikey } = require("./remove");
             try {
                 await chat.removeParticipants([mentions]);
             } catch (error) {
-                m.reply(error.message);
+                console.log(error.message);
             }
             mentions.pop()
             }
