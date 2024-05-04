@@ -21,10 +21,10 @@ async function play(m, name){
 
             const media =  MessageMedia.fromFilePath(`./${n}.mp3`)
             await chat.sendMessage(media, {
-                sendMediaAsDocument: true,
+                sendMediaAsVoice: true,
                 caption:n
             })
-        
+           fs.unlinkSync(`./${n}.mp3`)
            } catch (error) {
             m.reply(error.message);
            }

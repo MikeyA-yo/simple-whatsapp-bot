@@ -25,7 +25,7 @@ async function video(m, name){
                 sendMediaAsDocument: true,
                 caption:n
             })
-          
+            fs.unlinkSync(b)
            } catch (error) {
             m.reply(error.message);
            }
