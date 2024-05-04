@@ -20,12 +20,15 @@ async function video(m, name){
          let b = `./${n}.mp4`
          await createVid(url, n);
          try {
-            const media = await  MessageMedia.fromFilePath(b)
-            await chat.sendMessage(media,{
-                sendMediaAsDocument: true,
-                caption:n
-            })
-            fs.unlinkSync(b)
+            m.reply('download started.........')
+            setTimeout(async ()=>{
+                const media =   MessageMedia.fromFilePath(b)
+                await chat.sendMessage(media,{
+                    sendMediaAsDocument: true,
+                    caption:n
+                })
+                fs.unlinkSync(b)
+            }, 10500)
            } catch (error) {
             m.reply(error.message);
            }
