@@ -3,7 +3,8 @@ const yts = require('yt-search')
 const fs = require('fs');
 const { MessageMedia } = require('whatsapp-web.js');
 function createAudio(url, n){
-    yt(url, {filter: "audioonly", quality:"lowest"}).pipe(fs.createWriteStream(`./${n}.mp3`));
+    let stream = fs.createWriteStream(`./${n}.mp3`);
+    yt(url, {filter: "audioonly", quality:"lowest"}).pipe(stream);
 }
 async function play(m, name){
    const chat = await m.getChat();
@@ -21,7 +22,7 @@ async function play(m, name){
 
             const media =  MessageMedia.fromFilePath(`./${n}.mp3`)
             await chat.sendMessage(media, {
-                sendMediaAsVoice: true,
+                sendMediaAsDocument: true,
                 caption:n
             })
            fs.unlinkSync(`./${n}.mp3`)

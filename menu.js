@@ -9,6 +9,7 @@ const menu = [
     '!ping',
     '!type',
     '!play',
+    '!video',
     '\n------Owner--------\n',
     '!leave',
     '!join',
