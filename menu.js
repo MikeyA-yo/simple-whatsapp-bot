@@ -8,6 +8,7 @@ const menu = [
     '!invite',
     '!ping',
     '!type',
+    '!play',
     '\n------Owner--------\n',
     '!leave',
     '!join',

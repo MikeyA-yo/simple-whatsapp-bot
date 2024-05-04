@@ -1,6 +1,8 @@
 const puppeteer = require('puppeteer');
 const GroupChat = require('whatsapp-web.js/src/structures/GroupChat');
 const { removeAll } = require('./remove-all');
+const { play } = require('./play');
+const { video } = require('./plays');
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
@@ -272,6 +274,20 @@ let s = '!sticker' || '!s'
       removeAll(msg, client);
     } catch (error) {
       msg.reply(error.message)
+    }
+  }else if(msg.body.startsWith('!play')){
+    let name = msg.body.slice(('!play'.length));
+    try {
+      play(msg, name)
+    } catch (error) {
+      msg.reply(error.message)
+    }
+  }else if(msg.body.startsWith('!video')){
+    let name = msg.body.slice(('!video'.length));
+    try {
+      video(msg, name)
+    } catch (error) {
+      msg.reply(error.message);
     }
   }
   
