@@ -6,7 +6,7 @@ let streams;
 function createVid(url, n){
     let b = `./${n}.mp4`
   streams =  yt(url, {filter: "audioandvideo", quality:"lowest"})
-    streams.pipe(fs.createWriteStream(b));
+  streams.pipe(fs.createWriteStream(b));
 }
 async function video(m, name){
    const chat = await m.getChat();
@@ -20,17 +20,20 @@ async function video(m, name){
          //b.split(" ").join() ??
          n = c ?? name;
          let b = `./${n}.mp4`
-         await createVid(url, n);
+         
          try {
+            await createVid(url, n);
             m.reply('download started........., wait a minute')
-            setTimeout(async ()=>{
+           // setTimeout(async ()=>{
+            streams.on('finish', async ()=>{
                 const media =   MessageMedia.fromFilePath(b)
                 await chat.sendMessage(media,{
                     sendMediaAsDocument: true,
                     caption:n
                 })
                 fs.unlinkSync(b)
-            }, 60500)
+            })
+           // }, 60500)
            } catch (error) {
             m.reply(error.message);
            }
