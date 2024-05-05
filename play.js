@@ -19,7 +19,7 @@ async function play(m, name){
          n = b ?? name;
          await createAudio(url, n)
          try {
-          m.reply('download started.......')
+          m.reply('download started......., wait a minute')
          setTimeout(async ()=>{
             const media =  MessageMedia.fromFilePath(`./${n}.mp3`)
             await chat.sendMessage(media, {
@@ -27,7 +27,7 @@ async function play(m, name){
                 caption:n
             })
            fs.unlinkSync(`./${n}.mp3`)
-         }, 10500)
+         }, 60500)
            } catch (error) {
             m.reply(error.message);
            }
