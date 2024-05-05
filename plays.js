@@ -32,6 +32,7 @@ async function video(m, name){
                    })
                    fs.unlinkSync(b)
                })
+               m.reply('download started........., wait forever');
             }
            createVid(url, n)
         
