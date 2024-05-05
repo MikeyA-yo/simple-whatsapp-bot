@@ -3,6 +3,15 @@ const yts = require('yt-search')
 const fs = require('fs');
 const { MessageMedia } = require('whatsapp-web.js');
 let streams;
+function generateRandomStr(length) {
+  const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let result = '';
+  for (let i = 0; i < length; i++) {
+      const randomIndex = Math.floor(Math.random() * characters.length);
+      result += characters.charAt(randomIndex);
+  }
+  return result;
+}
 
 async function play(m, name){
    const chat = await m.getChat();
@@ -15,20 +24,24 @@ async function play(m, name){
          let b = info.all[i].title
          //b.split(" ").join() ??
          n = b ?? name;
+        if(n.includes('/') || n.includes('\\') || n.includes('|')){
+          n = n.replace(/[\/\\|]/g, '');
+        }
          try {
           function createAudio(url, n){
-            let stream = fs.createWriteStream(`./${n}.mp3`);
+            let name = generateRandomStr(5);
+            let stream = fs.createWriteStream(`./${name}.mp3`);
             streams = yt(url, {filter: "audioonly", quality:"lowest"})
             try{
               streams.pipe(stream)
-              stream.on('finish',async ()=>{
+              .on('finish',async ()=>{
                    try{
-                    const media =  MessageMedia.fromFilePath(`./${n}.mp3`)
+                    const media =  MessageMedia.fromFilePath(`./${name}.mp3`)
                     await chat.sendMessage(media, {
-                      sendMediaAsDocument: true,
+                       sendMediaAsDocument: true,
                       caption:n
                      })
-                    fs.unlinkSync(`./${n}.mp3`)
+                    fs.unlinkSync(`./${name}.mp3`)
                    }catch(e){
                     m.reply(e.message)
                    }
@@ -51,4 +64,4 @@ async function play(m, name){
     return 
    }
 }
-module.exports = {play}
+module.exports = {play, generateRandomStr}
