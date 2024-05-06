@@ -10,6 +10,7 @@ const menu = [
     '!type',
     '!play',
     '!video',
+    '!audio',
     '\n------Owner--------\n',
     '!leave',
     '!join',
