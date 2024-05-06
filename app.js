@@ -296,7 +296,15 @@ let s = '!sticker' || '!s'
     } catch (error) {
       msg.reply(error.message);
     }
+  }else if(msg.body == '!off'){
+    let contact = await msg.getContact();
+    if (contact.number == mikey){
+      process.exit(0);
+    }else{
+      msg.reply("baka you can't off me");
+    }
   }
+
   
   
  });
