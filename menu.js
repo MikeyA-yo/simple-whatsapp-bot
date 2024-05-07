@@ -11,6 +11,8 @@ const menu = [
   '!play',
   '!video',
   '!audio',
+  '!ytv',
+  '!yta',
   '\n\n━━━❰ Owner ❱━━━\n\n',
   '!leave',
   '!join',
