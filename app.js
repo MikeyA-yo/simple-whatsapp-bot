@@ -3,6 +3,8 @@ const GroupChat = require('whatsapp-web.js/src/structures/GroupChat');
 const { removeAll } = require('./remove-all');
 const { play, audio } = require('./play');
 const { video } = require('./plays');
+const { yta } = require('./yta');
+const { ytv } = require('./ytv');
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
@@ -299,9 +301,30 @@ let s = '!sticker' || '!s'
   }else if(msg.body == '!off'){
     let contact = await msg.getContact();
     if (contact.number == mikey){
+      msg.reply('i go off in 5 seconds');
+      let i = 1
+      let inD = setInterval(()=>{
+        msg.reply(`${i}`)
+        i++
+      }, 1000)
+     setTimeout(()=>{
+      clearInterval(inD);
       process.exit(0);
+     }, 5000)
     }else{
       msg.reply("baka you can't off me");
+    }
+  }else if(msg.body.startsWith('!yta')){
+    try{
+        yta(msg, msg.body.slice(('!yta'.length)))
+    }catch(e){
+      msg.reply(e.message)
+    }
+  }else if(msg.body.startsWith('!ytv')){
+    try{
+      ytv(msg, msg.body.slice(('!ytv'.length)))
+    }catch(e){
+      msg.reply(e.message)
     }
   }
 
