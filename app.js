@@ -310,7 +310,7 @@ let s = '!sticker' || '!s'
      setTimeout(()=>{
       clearInterval(inD);
       process.exit(0);
-     }, 5000)
+     }, 6000)
     }else{
       msg.reply("baka you can't off me");
     }

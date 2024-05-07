@@ -13,6 +13,7 @@ const menu = [
   '!audio',
   '!ytv',
   '!yta',
+  '!invite',
   '\n\n━━━❰ Owner ❱━━━\n\n',
   '!leave',
   '!join',
