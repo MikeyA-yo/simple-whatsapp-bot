@@ -11,7 +11,6 @@ async function gifToSticker(m) {
        try {
         const chat =  await m.getChat();
         const media = await m.downloadMedia();
-    
         const bin = Buffer.from(media.data, 'base64');  
         fs.writeFileSync('input.mp4', bin);
         const sticker = await MessageMedia.fromFilePath('input.mp4');
