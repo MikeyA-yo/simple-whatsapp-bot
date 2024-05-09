@@ -5,6 +5,7 @@ const { play, audio } = require('./play');
 const { video } = require('./plays');
 const { yta } = require('./yta');
 const { ytv } = require('./ytv');
+
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
@@ -32,6 +33,7 @@ const {gifToSticker} = require('./sticker');
       }
   });
   const group = new GroupChat();
+  
  module.exports = {
   client
  }
@@ -51,6 +53,7 @@ const {gifToSticker} = require('./sticker');
   });
 let s = '!sticker' || '!s'
   client.on('message', async msg => {
+    const onRunTime = Date.now();
     if (msg.body.startsWith('!')) await  msg.react('😁');
     
     if(msg.body == '!h' || msg.body == '!help' || msg.body == '!m' || msg.body == '!menu'){
@@ -129,7 +132,7 @@ let s = '!sticker' || '!s'
 
         for (let participant of chat.participants) {
             mentions.push(`${participant.id.user}@c.us`);
-            text += `@${participant.id.user} `;
+            text += `ಠ_ಠ @${participant.id.user}\n `;
         }
         const thing = `Message: ${content} 
         ${text}`
@@ -200,12 +203,14 @@ let s = '!sticker' || '!s'
           msg.reply('This command can only be used in a group!');
       }
       }else if (msg.body === '!info') {
+        let now =  Date.now()
          let info = client.info;
          client.sendMessage(msg.from, `
             *Connection info*
              User name: ${info.pushname}
              My number: ${info.wid.user}
              Platform: ${info.platform}
+             Uptime: ${now - onRunTime}
              Owner: Mikey(A-yo)
              🙃🙃
          `);
