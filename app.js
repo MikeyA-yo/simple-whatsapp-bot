@@ -51,9 +51,10 @@ const {gifToSticker} = require('./sticker');
   client.on('ready', () => {
       console.log('Client is ready!');
   });
+  const onRunTime = Date.now();
 let s = '!sticker' || '!s'
   client.on('message', async msg => {
-    const onRunTime = Date.now();
+    
     if (msg.body.startsWith('!')) await  msg.react('😁');
     
     if(msg.body == '!h' || msg.body == '!help' || msg.body == '!m' || msg.body == '!menu'){
