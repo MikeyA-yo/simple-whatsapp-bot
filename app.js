@@ -207,15 +207,15 @@ let s = '!sticker' || '!s'
         let now =  Date.now();
         let uptime = (now - onRunTime) > 1000 ? ((now - onRunTime)/1000)+'sec' : (now - onRunTime)
          let info = client.info;
-         client.sendMessage(msg.from, `
-            *Connection info*
-             User name: ${info.pushname}
-             My number: ${info.wid.user}
-             Platform: ${info.platform}
-             Uptime: ${ uptime }
-             Owner: Mikey(A-yo)
-             🙃🙃
-         `);
+         client.sendMessage(msg.from, 
+          `*Connection info*
+           User name: ${info.pushname}
+           My number: ${info.wid.user}
+           Platform: ${info.platform}
+           Uptime: ${ uptime }
+           Owner: Mikey(A-yo)
+             🙃🙃`
+            );
      }else if (msg.body.startsWith('!remove ')) {
       const chat = await msg.getChat();
       const mentions = await msg.getMentions();
