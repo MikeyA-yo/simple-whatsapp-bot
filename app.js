@@ -204,14 +204,15 @@ let s = '!sticker' || '!s'
           msg.reply('This command can only be used in a group!');
       }
       }else if (msg.body === '!info') {
-        let now =  Date.now()
+        let now =  Date.now();
+        let uptime = (now - onRunTime) > 1000 ? ((now - onRunTime)/1000)+'sec' : (now - onRunTime)
          let info = client.info;
          client.sendMessage(msg.from, `
             *Connection info*
              User name: ${info.pushname}
              My number: ${info.wid.user}
              Platform: ${info.platform}
-             Uptime: ${now - onRunTime}
+             Uptime: ${ uptime }
              Owner: Mikey(A-yo)
              🙃🙃
          `);
