@@ -333,6 +333,41 @@ let s = '!sticker' || '!s'
     }catch(e){
       msg.reply(e.message)
     }
+  }else if(msg.body.startsWith('!demote')){
+   // if
+   const chat = await msg.getChat();
+   const contact = await msg.getContact();
+       // Assuming you have a method to map contact name to phone number
+       
+      const phoneNumber = removeFunc(msg.body.slice(('!demote'.length + 1)), chat);
+      let no = phoneNumber + '@c.us';
+      try {
+       if(contact.number == mikey){
+         await chat.demoteParticipants([no]);
+          msg.reply('demoted');
+       }else{
+         msg.reply('not yet, dwry admins would be able to use this  process');
+       }
+      } catch (error) {
+       msg.reply(error.message)
+      }
+  }else if(msg.body.startsWith('!promote')){
+    const chat = await msg.getChat();
+   const contact = await msg.getContact();
+       // Assuming you have a method to map contact name to phone number
+       
+      const phoneNumber = removeFunc(msg.body.slice(('!promote'.length + 1)), chat);
+      let no = phoneNumber + '@c.us';
+      try {
+       if(contact.number == mikey){
+         await chat.promoteParticipants([no]);
+          msg.reply('promoted');
+       }else{
+         msg.reply('not yet, dwry admins would be able to use this  process');
+       }
+      } catch (error) {
+       msg.reply(error.message)
+      }
   }
 
   
