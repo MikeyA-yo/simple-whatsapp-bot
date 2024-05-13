@@ -5,8 +5,8 @@ const { play, audio } = require("./play");
 const { video } = require("./plays");
 const { yta } = require("./yta");
 const { ytv } = require("./ytv");
-const { users } = require("./users");
-
+const { users, getUser, updateUser } = require("./users");
+const fs = require('fs');
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
@@ -58,11 +58,12 @@ const { users } = require("./users");
   let s = "!sticker" || "!s";
   client.on("message", async (msg) => {
     const db = require("./usersdb.json");
+    let _contact = await msg.getContact();
     if (msg.body.startsWith("!")) {
       await msg.react("😁");
       const contact = await msg.getContact();
       db.forEach((user, i) => {
-        if (user.userId == contact.number) {
+        if (user.userId === contact.number) {
           return;
         } else {
           users(msg);
@@ -79,6 +80,14 @@ const { users } = require("./users");
     ) {
       let text = generateMenu();
       msg.reply(text);
+      db.forEach(async (user, i) => {
+        if (user.userId == _contact.number) {
+          let userExp = (user.userExp) + 1;
+          let banState = false
+          updateUser(msg, {userExp, banState}, JSON.stringify(fs.readFileSync('usersdb.json')));
+          return;
+        }
+      });
     }
     if (msg.body == "!ping") {
       msg.reply("pong");
@@ -233,7 +242,7 @@ const { users } = require("./users");
            User name: ${info.pushname}
            My number: ${info.wid.user}
            Platform: ${info.platform}
-           Users: ${db.length}
+           Users: ${require('./usersdb.json').length}
            Uptime: ${uptime}
            Owner: Mikey(A-yo)
              🙃🙃`
@@ -417,16 +426,9 @@ const { users } = require("./users");
         msg.reply(error.message);
       }
     } else if (msg.body == "!p" || msg.body == "!profile") {
-      const chat = await msg.getChat();
-      const contact = await msg.getContact();
-      db.forEach(async (user) => {
-        if (user.userId == contact.number) {
-          await msg.reply(
-            `Name: ${user.userName}\n\n Experience: ${user.userExp}\n\n Ban: ${user.banState}`
-          );
-          return;
-        }
-      });
+      setTimeout(()=>{
+        getUser(msg);
+      },2)
     }
   });
   client.on("group_join", async (notification) => {

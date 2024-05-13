@@ -45,4 +45,17 @@ async function updateUser(m, val, db){
    let data = JSON.stringify(db);
    fs.writeFileSync('usersdb.json', data);
 }
-module.exports = { users, updateUser }
+async function getUser(m){
+    const db = JSON.parse(fs.readFileSync('usersdb.json'));
+      const chat = await m.getChat();
+      const contact = await m.getContact();
+      db.forEach(async (user) => {
+        if (user.userId == contact.number) {
+          await m.reply(
+            `Name: ${user.userName}\n\nExperience: ${user.userExp}\n\nBan: ${user.banState}`
+          );
+          return;
+        }
+      });
+}
+module.exports = { users, updateUser, getUser }
