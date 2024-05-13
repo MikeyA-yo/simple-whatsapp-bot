@@ -1,4 +1,5 @@
 const fs = require('fs');
+const db = require('./usersdb.json');
 class userScheme{
     constructor(uname, uid, uexp, ustate){
         this.uname = uname,
@@ -20,7 +21,7 @@ async function users(m){
     let uexp = 0;
     let ustate = false;
     let newUser = new userScheme(uname, uid, uexp, ustate); 
-    let jsonArr = [];
+    let jsonArr = [...db];
     let userObject = {
         userName: newUser.uname,
         userId: newUser.uid,
@@ -31,4 +32,17 @@ async function users(m){
     let data = JSON.stringify(jsonArr);
     fs.writeFileSync('usersdb.json', data);
 }
-module.exports = { users }
+async function updateUser(m, val, db){
+   let contact = await m.getContact();
+   let {userExp, banState} = val;
+   let id = contact.number;
+   db.forEach((user, i )=> {
+     if (user.userId == id){
+        db[i].userExp = userExp;
+        db[i].banState = banState ?? false;
+     }
+   });
+   let data = JSON.stringify(db);
+   fs.writeFileSync('usersdb.json', data);
+}
+module.exports = { users, updateUser }

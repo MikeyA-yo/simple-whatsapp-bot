@@ -6,7 +6,6 @@ const { video } = require("./plays");
 const { yta } = require("./yta");
 const { ytv } = require("./ytv");
 const { users } = require("./users");
-const db = require('./usersdb.json')
 
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
@@ -58,10 +57,19 @@ const db = require('./usersdb.json')
   const onRunTime = Date.now();
   let s = "!sticker" || "!s";
   client.on("message", async (msg) => {
-    if (msg.body.startsWith("!")){
+    const db = require("./usersdb.json");
+    if (msg.body.startsWith("!")) {
       await msg.react("😁");
-      console.log(db)
-    } 
+      const contact = await msg.getContact();
+      db.forEach((user, i) => {
+        if (user.userId == contact.number) {
+          return;
+        } else {
+          users(msg);
+          return;
+        }
+      });
+    }
 
     if (
       msg.body == "!h" ||
@@ -225,6 +233,7 @@ const db = require('./usersdb.json')
            User name: ${info.pushname}
            My number: ${info.wid.user}
            Platform: ${info.platform}
+           Users: ${db.length}
            Uptime: ${uptime}
            Owner: Mikey(A-yo)
              🙃🙃`
@@ -361,7 +370,17 @@ const db = require('./usersdb.json')
           await chat.demoteParticipants([no]);
           msg.reply("demoted");
         } else {
-          msg.reply("not yet, dwry admins would be able to use this  process");
+          for (let p of chat.participants) {
+            if (contact.number == p.id.user) {
+              if (p.isAdmin) {
+                await chat.demoteParticipants([no]);
+                msg.reply("demoted");
+              } else {
+                msg.reply("only admins can use this command");
+              }
+              break;
+            }
+          }
         }
       } catch (error) {
         msg.reply(error.message);
@@ -382,11 +401,32 @@ const db = require('./usersdb.json')
           await chat.promoteParticipants([no]);
           msg.reply("promoted");
         } else {
-          msg.reply("not yet, dwry admins would be able to use this  process");
+          for (let p of chat.participants) {
+            if (contact.number == p.id.user) {
+              if (p.isAdmin) {
+                await chat.promoteParticipants([no]);
+                msg.reply("promoted");
+              } else {
+                msg.reply("only admins can use this command");
+              }
+              break;
+            }
+          }
         }
       } catch (error) {
         msg.reply(error.message);
       }
+    } else if (msg.body == "!p" || msg.body == "!profile") {
+      const chat = await msg.getChat();
+      const contact = await msg.getContact();
+      db.forEach(async (user) => {
+        if (user.userId == contact.number) {
+          await msg.reply(
+            `Name: ${user.userName}\n\n Experience: ${user.userExp}\n\n Ban: ${user.banState}`
+          );
+          return;
+        }
+      });
     }
   });
   client.on("group_join", async (notification) => {
