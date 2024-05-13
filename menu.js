@@ -22,6 +22,8 @@ const menu = [
   '!remove',
   '!remove-all',
   '!off',
+  '!demote',
+  '!promote',
   '\n\n━━━❰ Info ❱━━━\n\n',
   '!info',
   '!groupinfo',

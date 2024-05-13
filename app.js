@@ -316,10 +316,10 @@ const { ytv } = require("./ytv");
       let contact = await msg.getContact();
       if (contact.number == mikey) {
         msg.reply("i go off in 5 seconds");
-        let i = 1;
+        let i = 5;
         let inD = setInterval(() => {
           msg.reply(`${i}`);
-          i++;
+          i--;
         }, 1000);
         setTimeout(() => {
           clearInterval(inD);
@@ -345,7 +345,7 @@ const { ytv } = require("./ytv");
       const chat = await msg.getChat();
       const contact = await msg.getContact();
       // Assuming you have a method to map contact name to phone number
-
+      console.log(msg.author, msg.from);
       const phoneNumber = removeFunc(
         msg.body.slice("!demote".length + 1),
         chat
@@ -364,6 +364,7 @@ const { ytv } = require("./ytv");
     } else if (msg.body.startsWith("!promote")) {
       const chat = await msg.getChat();
       const contact = await msg.getContact();
+
       // Assuming you have a method to map contact name to phone number
 
       const phoneNumber = removeFunc(
