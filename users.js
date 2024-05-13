@@ -1,5 +1,5 @@
 const fs = require('fs');
-const db = require('./usersdb.json');
+const db = JSON.parse(fs.readFileSync('usersdb.json'))
 class userScheme{
     constructor(uname, uid, uexp, ustate){
         this.uname = uname,

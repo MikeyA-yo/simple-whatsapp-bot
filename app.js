@@ -57,19 +57,20 @@ const fs = require('fs');
   const onRunTime = Date.now();
   let s = "!sticker" || "!s";
   client.on("message", async (msg) => {
-    const db = require("./usersdb.json");
+    const db = JSON.parse(fs.readFileSync("./usersdb.json"));
     let _contact = await msg.getContact();
     if (msg.body.startsWith("!")) {
       await msg.react("😁");
       const contact = await msg.getContact();
+      let bool;
       db.forEach((user, i) => {
-        if (user.userId === contact.number) {
-          return;
-        } else {
-          users(msg);
-          return;
+        if (user.userId == contact.number){
+          bool = true;
         }
       });
+      if(!bool){
+        users(msg);
+      }
     }
 
     if (
@@ -84,7 +85,7 @@ const fs = require('fs');
         if (user.userId == _contact.number) {
           let userExp = (user.userExp) + 1;
           let banState = false
-          updateUser(msg, {userExp, banState}, JSON.stringify(fs.readFileSync('usersdb.json')));
+          updateUser(msg, {userExp, banState}, db);
           return;
         }
       });
@@ -242,7 +243,7 @@ const fs = require('fs');
            User name: ${info.pushname}
            My number: ${info.wid.user}
            Platform: ${info.platform}
-           Users: ${require('./usersdb.json').length}
+           Users: ${JSON.parse(fs.readFileSync("./usersdb.json")).length}
            Uptime: ${uptime}
            Owner: Mikey(A-yo)
              🙃🙃`
@@ -426,9 +427,7 @@ const fs = require('fs');
         msg.reply(error.message);
       }
     } else if (msg.body == "!p" || msg.body == "!profile") {
-      setTimeout(()=>{
         getUser(msg);
-      },2)
     }
   });
   client.on("group_join", async (notification) => {
