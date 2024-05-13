@@ -5,6 +5,8 @@ const { play, audio } = require("./play");
 const { video } = require("./plays");
 const { yta } = require("./yta");
 const { ytv } = require("./ytv");
+const { users } = require("./users");
+const db = require('./usersdb.json')
 
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
@@ -56,7 +58,10 @@ const { ytv } = require("./ytv");
   const onRunTime = Date.now();
   let s = "!sticker" || "!s";
   client.on("message", async (msg) => {
-    if (msg.body.startsWith("!")) await msg.react("😁");
+    if (msg.body.startsWith("!")){
+      await msg.react("😁");
+      console.log(db)
+    } 
 
     if (
       msg.body == "!h" ||
