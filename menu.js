@@ -14,6 +14,7 @@ const menu = [
   '!ytv',
   '!yta',
   '!invite',
+  '!profile',
   '\n\n━━━❰ Owner ❱━━━\n\n',
   '!leave',
   '!join',

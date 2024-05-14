@@ -5,8 +5,8 @@ const { play, audio } = require("./play");
 const { video } = require("./plays");
 const { yta } = require("./yta");
 const { ytv } = require("./ytv");
-const { users, getUser, updateUser } = require("./users");
-const fs = require('fs');
+const { users, getUser, updateUser, isBanned, BanUser } = require("./users");
+const fs = require("fs");
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
@@ -64,15 +64,15 @@ const fs = require('fs');
       const contact = await msg.getContact();
       let bool;
       db.forEach((user, i) => {
-        if (user.userId == contact.number){
+        if (user.userId == contact.number) {
           bool = true;
         }
       });
-      if(!bool){
+      if (!bool) {
         users(msg);
       }
     }
-
+    let state = await isBanned(msg);
     if (
       msg.body == "!h" ||
       msg.body == "!help" ||
@@ -83,102 +83,121 @@ const fs = require('fs');
       let text = generateMenu();
       msg.reply(text);
       // add exp
-      db.forEach(async (user, i) => {
-        if (user.userId == _contact.number) {
-          let userExp = (user.userExp) + 1;
-          let banState = false
-          updateUser(msg, {userExp, banState}, db);
-          return;
-        }
-      });
+      // db.forEach(async (user, i) => {
+      //   if (user.userId == _contact.number) {
+      //     let userExp = user.userExp + 1;
+      //     let banState = user.banState;
+      //     updateUser(msg, { userExp, banState }, db);
+      //     return;
+      //   }
+      // });
     }
     if (msg.body == "!ping") {
-      msg.reply("pong");
+      //check if user is banned
+      if (!state) {
+        msg.reply("pong");
+      } else {
+        //console.log(state)
+        msg.reply("you are banned");
+      }
     } else if (msg.body == "!x") {
       msg.reply("o");
     } else if (msg.body.startsWith("!wordlength")) {
-      const body = msg.body.slice(12);
-      const length = await String(lengthWords(body));
-      await msg.reply(length);
-    } else if (msg.body == s || msg.body == "!s") {
-      const chat = await msg.getChat();
-      if (!msg.hasMedia && !msg.hasQuotedMsg) {
-        msg.reply("no pic provided");
-      } else if (msg.hasMedia && msg.type == "image") {
-        const media = await msg.downloadMedia();
-        chat.sendMessage(media, {
-          sendMediaAsSticker: true,
-          stickerAuthor: "Mikey",
-          stickerName: "Bot",
-        });
-        //add exp
-        db.forEach(async (user, i) => {
-          if (user.userId == _contact.number) {
-            let userExp = (user.userExp) + 3;
-            let banState = false
-            updateUser(msg, {userExp, banState}, db);
-            return;
-          }
-        });
-      } else if (msg.hasQuotedMsg) {
-        const quote = await msg.getQuotedMessage();
-        if (!quote.hasMedia) msg.reply("no pic provided");
-        if (quote.hasMedia && quote.type == "image") {
-          try {
-            const media = await quote.downloadMedia();
-            chat.sendMessage(media, {
-              sendMediaAsSticker: true,
-              stickerAuthor: "Mikey",
-              stickerName: "Bot",
-            });
-            //add exp
-            db.forEach(async (user, i) => {
-              if (user.userId == _contact.number) {
-                let userExp = (user.userExp) + 3;
-                let banState = false
-                updateUser(msg, {userExp, banState}, db);
-                return;
-              }
-            });
-          } catch (e) {
-            msg.reply(e.message);
-          }
-        }
+      //check for ban
+      if (!state) {
+        const body = msg.body.slice(12);
+        const length = await String(lengthWords(body));
+        await msg.reply(length);
+      } else {
+        msg.reply("beg me to unban you");
       }
-    } else if (msg.body == "!s-g" || msg.body == "!sticker-g") {
-      if (msg.type == "video") {
-        try {
-          gifToSticker(msg);
+    } else if (msg.body == s || msg.body == "!s") {
+      if (!state) {
+        const chat = await msg.getChat();
+        if (!msg.hasMedia && !msg.hasQuotedMsg) {
+          msg.reply("no pic provided");
+        } else if (msg.hasMedia && msg.type == "image") {
+          const media = await msg.downloadMedia();
+          chat.sendMessage(media, {
+            sendMediaAsSticker: true,
+            stickerAuthor: "Mikey",
+            stickerName: "Bot",
+          });
           //add exp
           db.forEach(async (user, i) => {
             if (user.userId == _contact.number) {
-              let userExp = (user.userExp) + 4;
-              let banState = false
-              updateUser(msg, {userExp, banState}, db);
+              let userExp = user.userExp + 3;
+              let banState = false;
+              updateUser(msg, { userExp, banState }, db);
               return;
             }
           });
-        } catch (e) {
-          msg.reply(e.message);
+        } else if (msg.hasQuotedMsg) {
+          const quote = await msg.getQuotedMessage();
+          if (!quote.hasMedia) msg.reply("no pic provided");
+          if (quote.hasMedia && quote.type == "image") {
+            try {
+              const media = await quote.downloadMedia();
+              chat.sendMessage(media, {
+                sendMediaAsSticker: true,
+                stickerAuthor: "Mikey",
+                stickerName: "Bot",
+              });
+              //add exp
+              db.forEach(async (user, i) => {
+                if (user.userId == _contact.number) {
+                  let userExp = user.userExp + 3;
+                  let banState = false;
+                  updateUser(msg, { userExp, banState }, db);
+                  return;
+                }
+              });
+            } catch (e) {
+              msg.reply(e.message);
+            }
+          }
         }
-      } else if (msg.hasQuotedMsg) {
-        const q = await msg.getQuotedMessage();
-        if (q.type == "video") {
+      } else {
+        msg.reply("beg to be unbanned");
+      }
+    } else if (msg.body == "!s-g" || msg.body == "!sticker-g") {
+      if (!state) {
+        if (msg.type == "video") {
           try {
-            gifToSticker(q);
+            gifToSticker(msg);
             //add exp
             db.forEach(async (user, i) => {
               if (user.userId == _contact.number) {
-                let userExp = (user.userExp) + 1;
-                let banState = false
-                updateUser(msg, {userExp, banState}, db);
+                let userExp = user.userExp + 4;
+                let banState = false;
+                updateUser(msg, { userExp, banState }, db);
                 return;
               }
             });
           } catch (e) {
             msg.reply(e.message);
           }
+        } else if (msg.hasQuotedMsg) {
+          const q = await msg.getQuotedMessage();
+          if (q.type == "video") {
+            try {
+              gifToSticker(q);
+              //add exp
+              db.forEach(async (user, i) => {
+                if (user.userId == _contact.number) {
+                  let userExp = user.userExp + 1;
+                  let banState = false;
+                  updateUser(msg, { userExp, banState }, db);
+                  return;
+                }
+              });
+            } catch (e) {
+              msg.reply(e.message);
+            }
+          }
         }
+      } else {
+        msg.reply("mikey kun unbann me");
       }
     } else if (msg.body == "!invite") {
       //todo fix this crap /// done
@@ -193,19 +212,23 @@ const fs = require('fs');
         console.log(e.message);
       }
     } else if (msg.body.startsWith("!everyone")) {
-      const chat = await msg.getChat();
-      let content = say(msg.body);
-      let text = "";
-      let mentions = [];
+      if (!state) {
+        const chat = await msg.getChat();
+        let content = say(msg.body);
+        let text = "";
+        let mentions = [];
 
-      for (let participant of chat.participants) {
-        mentions.push(`${participant.id.user}@c.us`);
-        text += `ಠ_ಠ @${participant.id.user}\n `;
-      }
-      const thing = `Message: ${content} 
+        for (let participant of chat.participants) {
+          mentions.push(`${participant.id.user}@c.us`);
+          text += `ಠ_ಠ @${participant.id.user}\n `;
+        }
+        const thing = `Message: ${content} 
         ${text}`;
 
-      await chat.sendMessage(thing, { mentions });
+        await chat.sendMessage(thing, { mentions });
+      } else {
+        msg.reply("go unban yourself first");
+      }
     } else if (msg.body === "!leave") {
       // Leave the group
       let contact = await msg.getContact();
@@ -277,7 +300,11 @@ const fs = require('fs');
       let info = client.info;
       client.sendMessage(
         msg.from,
-        `*Connection info*\n\nUser name: ${info.pushname}\n\nMy number: ${info.wid.user}\n\nPlatform: ${info.platform}\n\nUsers: ${JSON.parse(fs.readFileSync("./usersdb.json")).length}\n\nUptime: ${uptime}  Owner: Mikey(A-yo)
+        `*Connection info*\n\nUser name: ${info.pushname}\n\nMy number: ${
+          info.wid.user
+        }\n\nPlatform: ${info.platform}\n\nUsers: ${
+          JSON.parse(fs.readFileSync("./usersdb.json")).length
+        }\n\nUptime: ${uptime}\n\nOwner: Mikey(A-yo)
              🙃🙃`
       );
     } else if (msg.body.startsWith("!remove ")) {
@@ -320,19 +347,23 @@ const fs = require('fs');
         msg.reply("Quoted message not found!");
       }
     } else if (msg.hasQuotedMsg && msg.body.startsWith("!delete")) {
-      // Get the quoted message object
-      const quotedMsg = await msg.getQuotedMessage();
+      if (!state) {
+        // Get the quoted message object
+        const quotedMsg = await msg.getQuotedMessage();
 
-      if (quotedMsg) {
-        // Delete the quoted message
-        try {
-          await quotedMsg.delete(true); // Passing true deletes the message for everyone
-          msg.reply("deleted");
-        } catch (e) {
-          msg.reply(e.message);
+        if (quotedMsg) {
+          // Delete the quoted message
+          try {
+            await quotedMsg.delete(true); // Passing true deletes the message for everyone
+            msg.reply("deleted");
+          } catch (e) {
+            msg.reply(e.message);
+          }
+        } else {
+          msg.reply("Quoted message not found!");
         }
       } else {
-        msg.reply("Quoted message not found!");
+        msg.reply("what are you trying to do here");
       }
     } else if (msg.body.startsWith("!type")) {
       if (msg.hasQuotedMsg) {
@@ -348,44 +379,52 @@ const fs = require('fs');
         msg.reply(error.message);
       }
     } else if (msg.body.startsWith("!play")) {
-      let name = msg.body.slice("!play".length);
-      try {
-        play(msg, name);
-        //add exp
-        db.forEach(async (user, i) => {
-          if (user.userId == _contact.number) {
-            let userExp = (user.userExp) + 8;
-            let banState = false
-            updateUser(msg, {userExp, banState}, db);
-            return;
+      if (!state) {
+        console.log(state)
+        let name = msg.body.slice("!play".length);
+        if (msg.body.length == "!play".length) {
+          msg.reply("this is why i don't trust users input");
+        } else {
+          try {
+            play(msg, name);
+            //add exp
+            db.forEach(async (user, i) => {
+              if (user.userId == _contact.number) {
+                let userExp = user.userExp + 8;
+                let banState = false;
+                updateUser(msg, { userExp, banState }, db);
+                return;
+              }
+            });
+          } catch (error) {
+            msg.reply(error.message);
           }
-        });
-      } catch (error) {
-        msg.reply(error.message);
+        }
+      } else {
+        msg.reply("why are you gay?");
       }
     } else if (msg.body.startsWith("!video")) {
       let name = msg.body.slice("!video".length);
-      try {
-        video(msg, name);
-        //add exp
-        db.forEach(async (user, i) => {
-          if (user.userId == _contact.number) {
-            let userExp = (user.userExp) + 7;
-            let banState = false
-            updateUser(msg, {userExp, banState}, db);
-            return;
-          }
-        });
-      } catch (error) {
-        msg.reply(error.message);
+      if (msg.body.length == "!video".length) {
+        msg.reply("nice try user and your worng usage");
+      } else {
+        try {
+          video(msg, name);
+          //add exp
+          db.forEach(async (user, i) => {
+            if (user.userId == _contact.number) {
+              let userExp = user.userExp + 7;
+              let banState = false;
+              updateUser(msg, { userExp, banState }, db);
+              return;
+            }
+          });
+        } catch (error) {
+          msg.reply(error.message);
+        }
       }
     } else if (msg.body.startsWith("!audio")) {
-      let name = msg.body.slice("!audio".length);
-      try {
-        audio(msg, name);
-      } catch (error) {
-        msg.reply(error.message);
-      }
+      msg.reply("command temporary not available");
     } else if (msg.body == "!off") {
       let contact = await msg.getContact();
       if (contact.number == mikey) {
@@ -403,34 +442,42 @@ const fs = require('fs');
         msg.reply("baka you can't off me");
       }
     } else if (msg.body.startsWith("!yta")) {
-      try {
-        yta(msg, msg.body.slice("!yta".length));
-        //add exp
-        db.forEach(async (user, i) => {
-          if (user.userId == _contact.number) {
-            let userExp = (user.userExp) + 6;
-            let banState = false
-            updateUser(msg, {userExp, banState}, db);
-            return;
-          }
-        });
-      } catch (e) {
-        msg.reply(e.message);
+      if (!state) {
+        try {
+          yta(msg, msg.body.slice("!yta".length));
+          //add exp
+          db.forEach(async (user, i) => {
+            if (user.userId == _contact.number) {
+              let userExp = user.userExp + 6;
+              let banState = false;
+              updateUser(msg, { userExp, banState }, db);
+              return;
+            }
+          });
+        } catch (e) {
+          msg.reply(e.message);
+        }
+      } else {
+        msg.reply("you are currently not allowed");
       }
     } else if (msg.body.startsWith("!ytv")) {
-      try {
-        ytv(msg, msg.body.slice("!ytv".length));
-        //add exp
-        db.forEach(async (user, i) => {
-          if (user.userId == _contact.number) {
-            let userExp = (user.userExp) + 7;
-            let banState = false
-            updateUser(msg, {userExp, banState}, db);
-            return;
-          }
-        });
-      } catch (e) {
-        msg.reply(e.message);
+      if (!state) {
+        try {
+          ytv(msg, msg.body.slice("!ytv".length));
+          //add exp
+          db.forEach(async (user, i) => {
+            if (user.userId == _contact.number) {
+              let userExp = user.userExp + 7;
+              let banState = false;
+              updateUser(msg, { userExp, banState }, db);
+              return;
+            }
+          });
+        } catch (e) {
+          msg.reply(e.message);
+        }
+      } else {
+        msg.reply("beg to be unbanned");
       }
     } else if (msg.body.startsWith("!demote")) {
       // if
@@ -495,7 +542,19 @@ const fs = require('fs');
         msg.reply(error.message);
       }
     } else if (msg.body == "!p" || msg.body == "!profile") {
-        getUser(msg);
+      getUser(msg);
+    } else if (msg.body.startsWith("!ban")) {
+      let chat = await msg.getChat();
+      const phoneNumber = removeFunc(msg.body.slice("!ban".length + 1), chat);
+      if (_contact.number == mikey) {
+        db.forEach(async (user, i) => {
+          if (user.userId == phoneNumber) {
+            BanUser(phoneNumber);
+          }
+        });
+      } else {
+        msg.reply("you can't ban em");
+      }
     }
   });
   client.on("group_join", async (notification) => {
