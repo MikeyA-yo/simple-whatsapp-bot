@@ -68,7 +68,7 @@ async function getUser(m) {
     if (user.userId == contact.number) {
       let rank = ranks[Math.floor(user.userExp / 100 - 1)] ?? "beginners";
       await m.reply(
-        `Name: ${user.userName}\n\nExperience: ${user.userExp}\n\n Rank: ${rank}\n\nBan: ${user.banState}`
+        `🏮Name: ${user.userName}\n\n🎏 Experience: ${user.userExp}\n\n 🏅Rank: ${rank}\n\n🚩❌Ban: ${user.banState}`
       );
       return;
     }
