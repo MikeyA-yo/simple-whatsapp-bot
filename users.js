@@ -8,7 +8,12 @@ const ranks = [
   "expert",
   "expert pro",
   "mastery",
+  "legend wannabe",
+  "legend air",
   "legend",
+  "icon wannabe",
+  "icon air",
+  "icon",
   "mikey",
 ];
 class userScheme {
