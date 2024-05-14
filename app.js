@@ -309,7 +309,7 @@ const fs = require("fs");
         msg.from,
         `*Connection info*\n\nUser name: ${info.pushname}\n\nMy number: ${
           info.wid.user
-        }\n\nPlatform: ${info.platform}\n\nUsers: ${
+        }\n\nPlatform: ${process.platform}\n\nUsers: ${
           JSON.parse(fs.readFileSync("./usersdb.json")).length
         }\n\nUptime: ${uptime}\n\nOwner: Mikey(A-yo)
              🙃🙃`
@@ -387,7 +387,6 @@ const fs = require("fs");
       }
     } else if (msg.body.startsWith("!play")) {
       if (!state) {
-        console.log(state);
         let name = msg.body.slice("!play".length);
         if (msg.body.length == "!play".length) {
           msg.reply("this is why i don't trust users input");

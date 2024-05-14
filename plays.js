@@ -16,13 +16,20 @@ async function video(m, name){
          let c = info.all[i].title
          //b.split(" ").join() ??
          n = c ?? name;
-        
+         if(info.all[i].seconds > 1800){
+          m.reply('to download anything long, kindly send some donations to 8037042088 on OPAY, or card to  my number 08089132385');
+          return;
+        }
          
          try {
             function createVid(url, n){
                 let c = generateRandomStr(5)
                 let b = `./${c}.mp4`
               streams =  yt(url, {filter: "audioandvideo", quality:"lowest"})
+              if(info.all[i].seconds > 1800){
+                m.reply('To download anything long, kindly send some donations to 8037042088 on OPAY, or card to  my number 08089132385');
+                return;
+              }
               streams.pipe(fs.createWriteStream(b))
               .on('finish', async ()=>{
                    const media =   MessageMedia.fromFilePath(b)

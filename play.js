@@ -24,6 +24,10 @@ async function play(m, name){
          let b = info.all[i].title
          //b.split(" ").join() ??
          n = b ?? name;
+         if(info.all[i].seconds > 1800){
+          m.reply('To download anything long, kindly send some donations to 8037042088 on OPAY, or card to  my number 08089132385');
+          return;
+        }
         if(n.includes('/') || n.includes('\\') || n.includes('|')){
           n = n.replace(/[\/\\|]/g, '');
         }
@@ -71,8 +75,17 @@ async function audio(m, name){
   let n;
   for(let i = 0; i < info.all.length; i++){
    if (info.all[i].type == "video"){
+    if(info.all[i].seconds >= 1800){
+      m.reply('to download anything long, kindly send some donations to 8037042088 on OPAY, or card to  my number 08089132385');
+      return;
+    }
         url = info.all[i].url;   
         let b = info.all[i].title
+        if(info.all[i].seconds > 1800){
+          m.reply('to download anything long, kindly send some donations to 8037042088 on OPAY, or card to  my number 08089132385');
+          return;
+        }
+        console.log(info.all[i].seconds)
         //b.split(" ").join() ??
         n = b ?? name;
        if(n.includes('/') || n.includes('\\') || n.includes('|')){
@@ -83,6 +96,11 @@ async function audio(m, name){
            let name = generateRandomStr(5);
            let stream = fs.createWriteStream(`./${name}.mp3`);
            streams = yt(url, {filter: "audioonly", quality:"lowest"})
+           console.log(info.all[i].seconds)
+           if(info.all[i].seconds >= 1800){
+            m.reply('to download anything long, kindly send some donations to 8037042088 on OPAY, or card to  my number 08089132385');
+            return;
+          }
            try{
              streams.pipe(stream)
              .on('finish',async ()=>{
@@ -101,6 +119,10 @@ async function audio(m, name){
              m.reply(e.message)
            }
        }
+       if(info.all[i].seconds >= 1800){
+        m.reply('to download anything long, kindly send some donations to 8037042088 on OPAY, or card to  my number 08089132385');
+        return;
+      }
       createAudio(url, n)
        // }, 60500)
           } catch (error) {

@@ -6,13 +6,19 @@ async function yta(m, url){
     const chat = await m.getChat();
     const fName = generateRandomStr(3);
     const dataStream = yt(url,{filter: "audioonly", quality:"lowest"});
+    const details = (await yt.getBasicInfo(url,{filter: "audioonly", quality:"lowest"})).videoDetails;
+    if (details.lengthSeconds > 1800){
+      m.reply('to download anything long, kindly send some donations to 8037042088 on OPAY, or card to  my number 08089132385');
+      return;
+    }
     try{
        dataStream
        .pipe(fs.createWriteStream(`${fName}.mp3`))
        .on('finish',async ()=>{
          const audio = MessageMedia.fromFilePath(`${fName}.mp3`)
          await chat.sendMessage(audio,{
-            sendMediaAsDocument: true
+            sendMediaAsDocument: true,
+            caption: details.title
          })
          fs.unlinkSync(`${fName}.mp3`)
        });

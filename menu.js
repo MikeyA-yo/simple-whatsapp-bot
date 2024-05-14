@@ -15,6 +15,7 @@ const menu = [
   '!yta',
   '!invite',
   '!profile',
+  '!leaderboard',
   '\n\n━━━❰ Owner ❱━━━\n\n',
   '!leave',
   '!join',
