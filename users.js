@@ -92,6 +92,14 @@ async function BanUser(number ){
     fs.writeFileSync('usersdb.json', data);
 }
 async function LeaderBoard(m){
-
+    const db = JSON.parse(fs.readFileSync('usersdb.json'));
+    db.sort((a , b) =>{
+        return b.userExp - a.userExp
+    })
+    let text = 'Leader Board🎇🎗🎁🎗✨\n\n';
+    db.forEach((user, i) =>{
+     text += `${i+1} Name: ${user.userName}\n\nExperience: ${user.userExp}\n\nBan: ${user.banState}\n\n --------🧨🧨-------\n\n\n`
+    })
+    m.reply(text);
 }
-module.exports = { users, updateUser, getUser, isBanned, BanUser }
+module.exports = { users, updateUser, getUser, isBanned, BanUser, LeaderBoard }

@@ -5,7 +5,14 @@ const { play, audio } = require("./play");
 const { video } = require("./plays");
 const { yta } = require("./yta");
 const { ytv } = require("./ytv");
-const { users, getUser, updateUser, isBanned, BanUser } = require("./users");
+const {
+  users,
+  getUser,
+  updateUser,
+  isBanned,
+  BanUser,
+  LeaderBoard,
+} = require("./users");
 const fs = require("fs");
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
@@ -168,7 +175,7 @@ const fs = require("fs");
             //add exp
             db.forEach(async (user, i) => {
               if (user.userId == _contact.number) {
-                let userExp = user.userExp + 4;
+                let userExp = user.userExp + 8;
                 let banState = false;
                 updateUser(msg, { userExp, banState }, db);
                 return;
@@ -185,7 +192,7 @@ const fs = require("fs");
               //add exp
               db.forEach(async (user, i) => {
                 if (user.userId == _contact.number) {
-                  let userExp = user.userExp + 1;
+                  let userExp = user.userExp + 12;
                   let banState = false;
                   updateUser(msg, { userExp, banState }, db);
                   return;
@@ -380,7 +387,7 @@ const fs = require("fs");
       }
     } else if (msg.body.startsWith("!play")) {
       if (!state) {
-        console.log(state)
+        console.log(state);
         let name = msg.body.slice("!play".length);
         if (msg.body.length == "!play".length) {
           msg.reply("this is why i don't trust users input");
@@ -555,6 +562,11 @@ const fs = require("fs");
       } else {
         msg.reply("you can't ban em");
       }
+    } else if (
+      msg.body.startsWith("!lb") ||
+      msg.body.startsWith("!leaderboard")
+    ) {
+      LeaderBoard(msg);
     }
   });
   client.on("group_join", async (notification) => {
