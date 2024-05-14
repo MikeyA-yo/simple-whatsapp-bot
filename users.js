@@ -14,6 +14,7 @@ class userScheme{
 }
 
 async function users(m){
+    const db = JSON.parse(fs.readFileSync("./usersdb.json"));
     let chat = await m.getChat();
     let user = await m.getContact();
     let uname = user.pushname;

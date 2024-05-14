@@ -79,8 +79,10 @@ const fs = require('fs');
       msg.body == "!m" ||
       msg.body == "!menu"
     ) {
+      const db = JSON.parse(fs.readFileSync("./usersdb.json"));
       let text = generateMenu();
       msg.reply(text);
+      // add exp
       db.forEach(async (user, i) => {
         if (user.userId == _contact.number) {
           let userExp = (user.userExp) + 1;
@@ -109,6 +111,15 @@ const fs = require('fs');
           stickerAuthor: "Mikey",
           stickerName: "Bot",
         });
+        //add exp
+        db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = (user.userExp) + 3;
+            let banState = false
+            updateUser(msg, {userExp, banState}, db);
+            return;
+          }
+        });
       } else if (msg.hasQuotedMsg) {
         const quote = await msg.getQuotedMessage();
         if (!quote.hasMedia) msg.reply("no pic provided");
@@ -120,6 +131,15 @@ const fs = require('fs');
               stickerAuthor: "Mikey",
               stickerName: "Bot",
             });
+            //add exp
+            db.forEach(async (user, i) => {
+              if (user.userId == _contact.number) {
+                let userExp = (user.userExp) + 3;
+                let banState = false
+                updateUser(msg, {userExp, banState}, db);
+                return;
+              }
+            });
           } catch (e) {
             msg.reply(e.message);
           }
@@ -129,6 +149,15 @@ const fs = require('fs');
       if (msg.type == "video") {
         try {
           gifToSticker(msg);
+          //add exp
+          db.forEach(async (user, i) => {
+            if (user.userId == _contact.number) {
+              let userExp = (user.userExp) + 4;
+              let banState = false
+              updateUser(msg, {userExp, banState}, db);
+              return;
+            }
+          });
         } catch (e) {
           msg.reply(e.message);
         }
@@ -137,6 +166,15 @@ const fs = require('fs');
         if (q.type == "video") {
           try {
             gifToSticker(q);
+            //add exp
+            db.forEach(async (user, i) => {
+              if (user.userId == _contact.number) {
+                let userExp = (user.userExp) + 1;
+                let banState = false
+                updateUser(msg, {userExp, banState}, db);
+                return;
+              }
+            });
           } catch (e) {
             msg.reply(e.message);
           }
@@ -239,13 +277,7 @@ const fs = require('fs');
       let info = client.info;
       client.sendMessage(
         msg.from,
-        `*Connection info*
-           User name: ${info.pushname}
-           My number: ${info.wid.user}
-           Platform: ${info.platform}
-           Users: ${JSON.parse(fs.readFileSync("./usersdb.json")).length}
-           Uptime: ${uptime}
-           Owner: Mikey(A-yo)
+        `*Connection info*\n\nUser name: ${info.pushname}\n\nMy number: ${info.wid.user}\n\nPlatform: ${info.platform}\n\nUsers: ${JSON.parse(fs.readFileSync("./usersdb.json")).length}\n\nUptime: ${uptime}  Owner: Mikey(A-yo)
              🙃🙃`
       );
     } else if (msg.body.startsWith("!remove ")) {
@@ -319,6 +351,15 @@ const fs = require('fs');
       let name = msg.body.slice("!play".length);
       try {
         play(msg, name);
+        //add exp
+        db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = (user.userExp) + 8;
+            let banState = false
+            updateUser(msg, {userExp, banState}, db);
+            return;
+          }
+        });
       } catch (error) {
         msg.reply(error.message);
       }
@@ -326,6 +367,15 @@ const fs = require('fs');
       let name = msg.body.slice("!video".length);
       try {
         video(msg, name);
+        //add exp
+        db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = (user.userExp) + 7;
+            let banState = false
+            updateUser(msg, {userExp, banState}, db);
+            return;
+          }
+        });
       } catch (error) {
         msg.reply(error.message);
       }
@@ -355,12 +405,30 @@ const fs = require('fs');
     } else if (msg.body.startsWith("!yta")) {
       try {
         yta(msg, msg.body.slice("!yta".length));
+        //add exp
+        db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = (user.userExp) + 6;
+            let banState = false
+            updateUser(msg, {userExp, banState}, db);
+            return;
+          }
+        });
       } catch (e) {
         msg.reply(e.message);
       }
     } else if (msg.body.startsWith("!ytv")) {
       try {
         ytv(msg, msg.body.slice("!ytv".length));
+        //add exp
+        db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = (user.userExp) + 7;
+            let banState = false
+            updateUser(msg, {userExp, banState}, db);
+            return;
+          }
+        });
       } catch (e) {
         msg.reply(e.message);
       }
