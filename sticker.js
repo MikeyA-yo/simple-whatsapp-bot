@@ -7,21 +7,31 @@ var ffmpeg = require('fluent-ffmpeg');
 // const { convert } = require('./converter');
 
 async function gifToSticker(m) {
-    if (m.hasMedia && m.type == 'video') {
-       try {
-        const chat =  await m.getChat();
-        const media = await m.downloadMedia();
-       // let md = media.data;
-        console.log(media)
-        const bin = Buffer.from(media.data, 'base64');  
-        fs.writeFileSync('input.mp4', bin);
-        const sticker = await MessageMedia.fromFilePath('input.mp4');
-        await chat.sendMessage(sticker, { sendMediaAsSticker: true, stickerAuthor: 'Mikey', stickerName:'Bot'});
-        fs.unlinkSync('input.mp4')
-       } catch (e) {
-         m.reply(e.message)
-       }
+  if (m.hasMedia && m.type == 'video') {
+    try {
+     const chat =  await m.getChat();
+     const media = await m.downloadMedia();
+    // console.log(media)
+     await chat.sendMessage(media, { sendMediaAsSticker: true, stickerAuthor: 'Mikey', stickerName:'Bot'});
+    } catch (e) {
+      m.reply(e.message)
     }
+  }
+    // if (m.hasMedia && m.type == 'video') {
+    //    try {
+    //     const chat =  await m.getChat();
+    //     const media = await m.downloadMedia();
+    //    // let md = media.data;
+    //     console.log(media)
+    //     const bin = Buffer.from(media.data, 'base64');  
+    //     fs.writeFileSync('input.mp4', bin);
+    //     const sticker = await MessageMedia.fromFilePath('input.mp4');
+    //     await chat.sendMessage(sticker, { sendMediaAsSticker: true, stickerAuthor: 'Mikey', stickerName:'Bot'});
+    //     fs.unlinkSync('input.mp4')
+    //    } catch (e) {
+    //      m.reply(e.message)
+    //    }
+    // }
 }
 // try {
 //     const chat =  await m.getChat();
