@@ -40,7 +40,7 @@ async function daily(m) {
   const db = JSON.parse(fs.readFileSync("wallets.json"));
   let contact = await m.getContact();
   let id = contact.number;
-  let day = new Date().getDay();
+  let day = new Date().getDate();
   db.forEach((user, i) => {
     if (user.id == id) {
       if (user.dailyTime == 0) {
@@ -64,4 +64,16 @@ async function daily(m) {
   let data = JSON.stringify(db);
   fs.writeFileSync("wallets.json", data);
 }
-module.exports = { createWallet, daily };
+async function wallet(m){
+    const db = JSON.parse(fs.readFileSync("wallets.json"));
+  let contact = await m.getContact();
+  let name = await contact.pushname;
+  let id = contact.number;
+  db.forEach(user =>{
+    if(id == user.id){
+        m.reply(`Hello, ${name}✨\n\n💸Wallet: ${user.wallet}\n\n🏛Bank :${user.bank}`);
+        return
+    }
+  })
+}
+module.exports = { createWallet, daily , wallet};

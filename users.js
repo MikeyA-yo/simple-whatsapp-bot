@@ -66,14 +66,22 @@ async function updateUser(m, val, db) {
   fs.writeFileSync("usersdb.json", data);
 }
 async function getUser(m) {
+  const walletDb = JSON.parse(fs.readFileSync("wallets.json"));
   const db = JSON.parse(fs.readFileSync("usersdb.json"));
   const chat = await m.getChat();
   const contact = await m.getContact();
+  let wallet;
+  walletDb.forEach((user)=>{
+    if(user.id == contact.number){
+      wallet = user.wallet;
+      return;
+    }
+  })
   db.forEach(async (user) => {
     if (user.userId == contact.number) {
       let rank = ranks[Math.floor(user.userExp / 100 - 1)] ?? "beginners";
       await m.reply(
-        `🏮Name: ${user.userName}\n\n🎏 Experience: ${user.userExp}\n\n 🏅Rank: ${rank}\n\n🚩❌Ban: ${user.banState}`
+        `🏮Name: ${user.userName}\n\n🎏 Experience: ${user.userExp}\n\n 🏅Rank: ${rank}\n\n💸Wallet: ${wallet ?? 0}\n\n🚩❌Ban: ${user.banState}`
       );
       return;
     }
@@ -107,6 +115,18 @@ async function BanUser(number) {
   let data = JSON.stringify(db);
   fs.writeFileSync("usersdb.json", data);
 }
+async function unBanUser(number){
+  let db = JSON.parse(fs.readFileSync("usersdb.json"));
+  let id = number;
+  db.forEach((user, i) => {
+    if (user.userId == id) {
+      db[i].userExp = 0;
+      db[i].banState = false;
+    }
+  });
+  let data = JSON.stringify(db);
+  fs.writeFileSync("usersdb.json", data);
+}
 async function LeaderBoard(m) {
   const db = JSON.parse(fs.readFileSync("usersdb.json"));
   db.sort((a, b) => {
@@ -121,4 +141,4 @@ async function LeaderBoard(m) {
   });
   m.reply(text);
 }
-module.exports = { users, updateUser, getUser, isBanned, BanUser, LeaderBoard };
+module.exports = { users, updateUser, getUser, isBanned, BanUser, LeaderBoard, unBanUser };

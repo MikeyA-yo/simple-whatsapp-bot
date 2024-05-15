@@ -12,9 +12,10 @@ const {
   isBanned,
   BanUser,
   LeaderBoard,
+  unBanUser,
 } = require("./users");
 const fs = require("fs");
-const { createWallet, daily } = require("./economy");
+const { createWallet, daily, wallet } = require("./economy");
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
@@ -597,8 +598,45 @@ const { createWallet, daily } = require("./economy");
     }else if(msg.body == '!daily'){
       if(!state){
         daily(msg)
+         //add exp
+         db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = user.userExp + 18;
+            let banState = false;
+            updateUser(msg, { userExp, banState }, db);
+            return;
+          }
+        });
       }else{
         msg.reply('no money for banned ppl')
+      }
+    }else if(msg.body == '!wallet'){
+      if(!state){
+        wallet(msg);
+         //add exp
+         db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = user.userExp + 21;
+            let banState = false;
+            updateUser(msg, { userExp, banState }, db);
+            return;
+          }
+        });
+      }else{
+        msg.reply('banned ppl got nothing')
+      }
+    }else if(msg.body.startsWith('!unban')){
+      let chat = await msg.getChat();
+      const phoneNumber = removeFunc(msg.body.slice("!unban".length + 1), chat);
+      if (_contact.number == mikey) {
+        db.forEach(async (user, i) => {
+          if (user.userId == phoneNumber) {
+            unBanUser(phoneNumber);
+            msg.reply("you're free now");
+          }
+        });
+      } else {
+        msg.reply("you can't unban em");
       }
     }
   });
