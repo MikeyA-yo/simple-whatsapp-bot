@@ -24,6 +24,8 @@ const ranks = [
   "icon wannabe",
   "icon air",
   "icon",
+  "crazy",
+  "level infinity",
   "mikey",
 ];
 class userScheme {
@@ -89,7 +91,7 @@ async function getUser(m) {
   });
   db.forEach(async (user) => {
     if (user.userId == contact.number) {
-      let rank = ranks[Math.floor(user.userExp / 100 - 1)] ?? "beginners";
+      let rank = ranks[Math.floor(user.userExp / 890 - 1)] ?? "beginners";
       await m.reply(
         `🏮Name: ${user.userName}\n\n🎏 Experience: ${
           user.userExp
@@ -149,7 +151,7 @@ async function LeaderBoard(m) {
     });
     let text = "Leader Board🎇🎗🎁🎗✨\n\n";
     db.forEach((user, i) => {
-      let rank = ranks[Math.floor(user.userExp / 100 - 1)] ?? "beginners";
+      let rank = ranks[Math.floor(user.userExp / 500 - 1)] ?? "beginners";
       text += `>${i + 1}\n🏮 Name: ${user.userName}\n\n🎏 Experience: ${
         user.userExp
       }\n\n🏅 Rank: ${rank}\n\n❌ Ban: ${

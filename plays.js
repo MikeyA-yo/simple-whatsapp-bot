@@ -27,7 +27,7 @@ async function video(m, name){
                 let b = `./${c}.mp4`
               streams =  yt(url, {filter: "audioandvideo", quality:"lowest"})
               if(info.all[i].seconds > 1800){
-                m.reply('To download anything long, kindly send some donations to 8037042088 on OPAY, or card to  my number 08089132385');
+                m.reply('To download anything long, kindly send some donations to 8037042088 on OPAY');
                 return;
               }
               streams.pipe(fs.createWriteStream(b))

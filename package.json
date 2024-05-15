@@ -6,6 +6,7 @@
   "dependencies": {
     "jimp": "^0.22.12",
     "qrcode-terminal": "latest",
+    "slot-machine": "^2.1.0",
     "whatsapp-web.js": "github:pedroslopez/whatsapp-web.js#webpack-exodus",
     "yt-search": "^2.10.4",
     "ytdl-core": "^4.11.5"

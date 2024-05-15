@@ -15,7 +15,15 @@ const {
   unBanUser,
 } = require("./users");
 const fs = require("fs");
-const { createWallet, daily, wallet, deposit, bank } = require("./economy");
+const {
+  createWallet,
+  daily,
+  wallet,
+  deposit,
+  bank,
+  slot,
+  withdraw,
+} = require("./economy");
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
@@ -595,11 +603,11 @@ const { createWallet, daily, wallet, deposit, bank } = require("./economy");
       } else {
         msg.reply("banned user, what exactly are you trying to start?");
       }
-    }else if(msg.body == '!daily'){
-      if(!state){
-        daily(msg)
-         //add exp
-         db.forEach(async (user, i) => {
+    } else if (msg.body == "!daily") {
+      if (!state) {
+        daily(msg);
+        //add exp
+        db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
             let userExp = user.userExp + 12;
             let banState = false;
@@ -607,14 +615,16 @@ const { createWallet, daily, wallet, deposit, bank } = require("./economy");
             return;
           }
         });
-      }else{
-        msg.reply('no money for banned ppl')
+      } else {
+        msg.reply("no money for banned ppl");
       }
-    }else if(msg.body == '!wallet'){
-      if(!state){
+    } else if (msg.body == "!wallet") {
+      if (!state) {
+       setTimeout(()=>{
         wallet(msg);
-         //add exp
-         db.forEach(async (user, i) => {
+       },2000)
+        //add exp
+        db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
             let userExp = user.userExp + 21;
             let banState = false;
@@ -622,10 +632,10 @@ const { createWallet, daily, wallet, deposit, bank } = require("./economy");
             return;
           }
         });
-      }else{
-        msg.reply('banned ppl got nothing')
+      } else {
+        msg.reply("banned ppl got nothing");
       }
-    }else if(msg.body.startsWith('!unban')){
+    } else if (msg.body.startsWith("!unban")) {
       let chat = await msg.getChat();
       const phoneNumber = removeFunc(msg.body.slice("!unban".length + 1), chat);
       if (_contact.number == mikey) {
@@ -638,12 +648,12 @@ const { createWallet, daily, wallet, deposit, bank } = require("./economy");
       } else {
         msg.reply("you can't unban em");
       }
-    }else if(msg.body.startsWith('!deposit ')){
-      if(!state){
-        const amount = parseInt(msg.body.slice(('!deposit '.length)));
+    } else if (msg.body.startsWith("!deposit ")) {
+      if (!state) {
+        const amount = parseInt(msg.body.slice("!deposit ".length));
         deposit(msg, amount);
-         //add exp
-         db.forEach(async (user, i) => {
+        //add exp
+        db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
             let userExp = user.userExp + 9;
             let banState = false;
@@ -651,14 +661,16 @@ const { createWallet, daily, wallet, deposit, bank } = require("./economy");
             return;
           }
         });
-      }else{
-        msg.reply("i'm tired of forming messages for banned people, this is likely the last one")
+      } else {
+        msg.reply(
+          "i'm tired of forming messages for banned people, this is likely the last one"
+        );
       }
-    }else if(msg.body == '!bank'){
-      if(!state){
+    } else if (msg.body == "!bank") {
+      if (!state) {
         bank(msg);
-         //add exp
-         db.forEach(async (user, i) => {
+        //add exp
+        db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
             let userExp = user.userExp + 21;
             let banState = false;
@@ -666,8 +678,42 @@ const { createWallet, daily, wallet, deposit, bank } = require("./economy");
             return;
           }
         });
-      }else{
-        msg.reply('banned ppl got nothing')
+      } else {
+        msg.reply("banned ppl got nothing");
+      }
+    } else if (msg.body.startsWith("!slot ")) {
+      if (!state) {
+        const amount = parseInt(msg.body.slice("!slot ".length));
+        setTimeout(()=>{
+          slot(msg, amount);
+        }, 2000)
+        //add exp
+        db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = user.userExp + 23;
+            let banState = false;
+            updateUser(msg, { userExp, banState }, db);
+            return;
+          }
+        });
+      }
+    }else if(msg.body.startsWith('!withdraw ')){
+      if (!state) {
+        const amount = parseInt(msg.body.slice("!withdraw ".length));
+        withdraw(msg, amount);
+        //add exp
+        db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = user.userExp + 9;
+            let banState = false;
+            updateUser(msg, { userExp, banState }, db);
+            return;
+          }
+        });
+      } else {
+        msg.reply(
+          "i'm tired of forming messages for banned people, this is likely the last one"
+        );
       }
     }
   });

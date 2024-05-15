@@ -8,7 +8,7 @@ async function ytv(m, url){
     const dataStream = yt(url,{filter: "audioandvideo", quality:"lowest"});
     const details = (await yt.getBasicInfo(url,{filter: "audioandvideo", quality:"lowest"})).videoDetails;
     if (details.lengthSeconds > 1800){
-      m.reply('to download anything long, kindly send some donations to 8037042088 on OPAY, or card to  my number 08089132385');
+      m.reply('To download anything long, kindly send some donations to 8037042088 on OPAY');
       return;
     }
     try{
