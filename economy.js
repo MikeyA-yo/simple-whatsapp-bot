@@ -84,6 +84,7 @@ async function wallet(m) {
 }
 async function deposit(m, amount) {
   const db = JSON.parse(fs.readFileSync("wallets.json"));
+  if(amount == NaN)  return;
   let contact = await m.getContact();
   let id = contact.number;
   db.forEach((user, i) => {

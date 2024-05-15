@@ -622,7 +622,7 @@ const {
       if (!state) {
        setTimeout(()=>{
         wallet(msg);
-       },2000)
+       },1500)
         //add exp
         db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
@@ -686,7 +686,7 @@ const {
         const amount = parseInt(msg.body.slice("!slot ".length));
         setTimeout(()=>{
           slot(msg, amount);
-        }, 2000)
+        }, 3500)
         //add exp
         db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
