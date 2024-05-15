@@ -64,16 +64,53 @@ async function daily(m) {
   let data = JSON.stringify(db);
   fs.writeFileSync("wallets.json", data);
 }
-async function wallet(m){
-    const db = JSON.parse(fs.readFileSync("wallets.json"));
+async function wallet(m) {
+  const db = JSON.parse(fs.readFileSync("wallets.json"));
   let contact = await m.getContact();
   let name = await contact.pushname;
   let id = contact.number;
-  db.forEach(user =>{
-    if(id == user.id){
-        m.reply(`Hello, ${name}✨\n\n💸Wallet: ${user.wallet}\n\n🏛Bank :${user.bank}`);
-        return
+  db.forEach((user) => {
+    if (id == user.id) {
+      m.reply(
+        `Hello, ${name}✨\n\n💸Wallet: ${user.wallet}\n\n🏛Bank :${user.bank}`
+      );
+      return;
     }
-  })
+  });
 }
-module.exports = { createWallet, daily , wallet};
+async function deposit(m, amount) {
+  const db = JSON.parse(fs.readFileSync("wallets.json"));
+  let contact = await m.getContact();
+  let id = contact.number;
+  db.forEach((user, i) => {
+    if (user.id == id) {
+      if (amount > user.wallet) {
+        m.reply("nigga you're broke your balance ain't enough for this");
+      } else {
+        db[i].wallet -= amount;
+        db[i].bank += amount;
+        m.reply(
+          `You have deposited ${amount} to your bank\n Balance: ${db[i].wallet}`
+        );
+      }
+      return;
+    }
+  });
+
+  let data = JSON.stringify(db);
+  fs.writeFileSync("wallets.json", data);
+}async function bank(m){
+    const db = JSON.parse(fs.readFileSync("wallets.json"));
+    let contact = await m.getContact();
+    let name = await contact.pushname;
+    let id = contact.number;
+    db.forEach((user) => {
+      if (id == user.id) {
+        m.reply(
+          `Hello, ${name}✨\n\n💸Wallet: ${user.wallet}\n\n🏛Bank :${user.bank}`
+        );
+        return;
+      }
+    });
+}
+module.exports = { createWallet, daily, wallet, deposit, bank };

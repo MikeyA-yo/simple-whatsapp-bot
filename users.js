@@ -2,12 +2,22 @@ const fs = require("fs");
 const db = JSON.parse(fs.readFileSync("usersdb.json"));
 const ranks = [
   "noobie",
+  "novice",
   "rookie",
   "citizen",
+  "talented",
+  "skilled",
   "apprehentice",
+  "intermediate",
+  "seasoned",
+  "proficient",
   "expert",
   "expert pro",
+  "advanced",
+  'senior',
+  "professor",
   "mastery",
+  "elite",
   "legend wannabe",
   "legend air",
   "legend",
@@ -71,17 +81,21 @@ async function getUser(m) {
   const chat = await m.getChat();
   const contact = await m.getContact();
   let wallet;
-  walletDb.forEach((user)=>{
-    if(user.id == contact.number){
+  walletDb.forEach((user) => {
+    if (user.id == contact.number) {
       wallet = user.wallet;
       return;
     }
-  })
+  });
   db.forEach(async (user) => {
     if (user.userId == contact.number) {
       let rank = ranks[Math.floor(user.userExp / 100 - 1)] ?? "beginners";
       await m.reply(
-        `🏮Name: ${user.userName}\n\n🎏 Experience: ${user.userExp}\n\n 🏅Rank: ${rank}\n\n💸Wallet: ${wallet ?? 0}\n\n🚩❌Ban: ${user.banState}`
+        `🏮Name: ${user.userName}\n\n🎏 Experience: ${
+          user.userExp
+        }\n\n 🏅Rank: ${rank}\n\n💸Wallet: ${wallet ?? 0}\n\n🚩❌Ban: ${
+          user.banState
+        }`
       );
       return;
     }
@@ -115,7 +129,7 @@ async function BanUser(number) {
   let data = JSON.stringify(db);
   fs.writeFileSync("usersdb.json", data);
 }
-async function unBanUser(number){
+async function unBanUser(number) {
   let db = JSON.parse(fs.readFileSync("usersdb.json"));
   let id = number;
   db.forEach((user, i) => {
@@ -128,17 +142,29 @@ async function unBanUser(number){
   fs.writeFileSync("usersdb.json", data);
 }
 async function LeaderBoard(m) {
-  const db = JSON.parse(fs.readFileSync("usersdb.json"));
-  db.sort((a, b) => {
-    return b.userExp - a.userExp;
-  });
-  let text = "Leader Board🎇🎗🎁🎗✨\n\n";
-  db.forEach((user, i) => {
-    let rank = ranks[Math.floor(user.userExp / 100 - 1)] ?? "beginners";
-    text += `${i + 1} Name: ${user.userName}\n\nExperience: ${
-      user.userExp
-    }\n\nRank: ${rank}\n\nBan: ${user.banState}\n\n --------🧨🧨-------\n\n\n`;
-  });
-  m.reply(text);
+  if (!m.body.includes("-")) {
+    const db = JSON.parse(fs.readFileSync("usersdb.json"));
+    db.sort((a, b) => {
+      return b.userExp - a.userExp;
+    });
+    let text = "Leader Board🎇🎗🎁🎗✨\n\n";
+    db.forEach((user, i) => {
+      let rank = ranks[Math.floor(user.userExp / 100 - 1)] ?? "beginners";
+      text += `>${i + 1}\n🏮 Name: ${user.userName}\n\n🎏 Experience: ${
+        user.userExp
+      }\n\n🏅 Rank: ${rank}\n\n❌ Ban: ${
+        user.banState
+      }\n\n --------🧨🧨-------\n\n\n`;
+    });
+    m.reply(text);
+  }
 }
-module.exports = { users, updateUser, getUser, isBanned, BanUser, LeaderBoard, unBanUser };
+module.exports = {
+  users,
+  updateUser,
+  getUser,
+  isBanned,
+  BanUser,
+  LeaderBoard,
+  unBanUser,
+};

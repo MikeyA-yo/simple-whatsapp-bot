@@ -15,7 +15,7 @@ const {
   unBanUser,
 } = require("./users");
 const fs = require("fs");
-const { createWallet, daily, wallet } = require("./economy");
+const { createWallet, daily, wallet, deposit, bank } = require("./economy");
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
@@ -564,7 +564,7 @@ const { createWallet, daily, wallet } = require("./economy");
       }
     } else if (msg.body == "!p" || msg.body == "!profile") {
       getUser(msg);
-    } else if (msg.body.startsWith("!ban")) {
+    } else if (msg.body.startsWith("!ban ")) {
       let chat = await msg.getChat();
       const phoneNumber = removeFunc(msg.body.slice("!ban".length + 1), chat);
       if (_contact.number == mikey) {
@@ -601,7 +601,7 @@ const { createWallet, daily, wallet } = require("./economy");
          //add exp
          db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
-            let userExp = user.userExp + 18;
+            let userExp = user.userExp + 12;
             let banState = false;
             updateUser(msg, { userExp, banState }, db);
             return;
@@ -637,6 +637,37 @@ const { createWallet, daily, wallet } = require("./economy");
         });
       } else {
         msg.reply("you can't unban em");
+      }
+    }else if(msg.body.startsWith('!deposit ')){
+      if(!state){
+        const amount = parseInt(msg.body.slice(('!deposit '.length)));
+        deposit(msg, amount);
+         //add exp
+         db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = user.userExp + 9;
+            let banState = false;
+            updateUser(msg, { userExp, banState }, db);
+            return;
+          }
+        });
+      }else{
+        msg.reply("i'm tired of forming messages for banned people, this is likely the last one")
+      }
+    }else if(msg.body == '!bank'){
+      if(!state){
+        bank(msg);
+         //add exp
+         db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = user.userExp + 21;
+            let banState = false;
+            updateUser(msg, { userExp, banState }, db);
+            return;
+          }
+        });
+      }else{
+        msg.reply('banned ppl got nothing')
       }
     }
   });
