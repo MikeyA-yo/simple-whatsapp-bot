@@ -14,6 +14,7 @@ const {
   LeaderBoard,
 } = require("./users");
 const fs = require("fs");
+const { createWallet, daily } = require("./economy");
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
@@ -65,6 +66,7 @@ const fs = require("fs");
   let s = "!sticker" || "!s";
   client.on("message", async (msg) => {
     const db = JSON.parse(fs.readFileSync("./usersdb.json"));
+    const walletDb = JSON.parse(fs.readFileSync("./wallets.json"));
     let _contact = await msg.getContact();
     if (msg.body.startsWith("!")) {
       await msg.react("😁");
@@ -77,6 +79,18 @@ const fs = require("fs");
       });
       if (!bool) {
         users(msg);
+      }
+      //create a new wallet db
+      if (true) {
+        let bool;
+        walletDb.forEach((user, i) => {
+          if (user.id == _contact.number) {
+            bool = true;
+          }
+        });
+        if (!bool) {
+          createWallet(msg);
+        }
       }
     }
     let state = await isBanned(msg);
@@ -566,6 +580,26 @@ const fs = require("fs");
       msg.body.startsWith("!leaderboard")
     ) {
       LeaderBoard(msg);
+    } else if (msg.body == "!start") {
+      if (!state) {
+        let bool;
+        walletDb.forEach((user, i) => {
+          if (user.id == _contact.number) {
+            bool = true;
+          }
+        });
+        if (!bool) {
+          createWallet(msg);
+        }
+      } else {
+        msg.reply("banned user, what exactly are you trying to start?");
+      }
+    }else if(msg.body == '!daily'){
+      if(!state){
+        daily(msg)
+      }else{
+        msg.reply('no money for banned ppl')
+      }
     }
   });
   client.on("group_join", async (notification) => {
