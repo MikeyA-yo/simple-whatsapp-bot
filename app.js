@@ -80,6 +80,18 @@ const { coolDown, checkUserCool } = require("./cooldown");
     const coolDb = JSON.parse(fs.readFileSync("cooldown.json"));
     let _contact = await msg.getContact();
     if (msg.body.startsWith("!")) {
+        //create cool down
+        if (true) {
+          let bool;
+          coolDb.forEach((user, i) => {
+            if (user.id == _contact.number) {
+              bool = true;
+            }
+          });
+          if (!bool) {
+            coolDown(msg);
+          }
+        }
       await msg.react("😁");
       let cooled = await checkUserCool(msg);
       if(!cooled){
@@ -108,18 +120,7 @@ const { coolDown, checkUserCool } = require("./cooldown");
           createWallet(msg);
         }
       }
-      //create cool down
-      if (true) {
-        let bool;
-        coolDb.forEach((user, i) => {
-          if (user.id == _contact.number) {
-            bool = true;
-          }
-        });
-        if (!bool) {
-          coolDown(msg);
-        }
-      }
+    
     }
     
    
