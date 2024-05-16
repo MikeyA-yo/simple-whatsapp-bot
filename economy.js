@@ -126,6 +126,10 @@ async function slot(m, amount) {
   let id = contact.number;
   const emojis = ["💈", "🥇", "🎟", "🎲", "❄", "🔥"];
   let slotArr = [];
+  if( amount > 6354664570822501000000n){
+    m.reply(`This is New Slot's limit, reduce volume`);
+    return;
+  }
   emojis.map((emoji) => {
     let newSlotSymbol = new SlotSymbol(generateRandomStr(5), {
       display: emoji,

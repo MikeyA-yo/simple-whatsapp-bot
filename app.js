@@ -24,6 +24,7 @@ const {
   slot,
   withdraw,
 } = require("./economy");
+const { coolDown, checkUserCool } = require("./cooldown");
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   const browser = await puppeteer.launch({
@@ -76,9 +77,15 @@ const {
   client.on("message", async (msg) => {
     const db = JSON.parse(fs.readFileSync("./usersdb.json"));
     const walletDb = JSON.parse(fs.readFileSync("./wallets.json"));
+    const coolDb = JSON.parse(fs.readFileSync("cooldown.json"));
     let _contact = await msg.getContact();
     if (msg.body.startsWith("!")) {
       await msg.react("😁");
+      let cooled = await checkUserCool(msg);
+      if(!cooled){
+        msg.reply("you're on a cooldown");
+        return;
+      }
       const contact = await msg.getContact();
       let bool;
       db.forEach((user, i) => {
@@ -101,7 +108,21 @@ const {
           createWallet(msg);
         }
       }
+      //create cool down
+      if (true) {
+        let bool;
+        coolDb.forEach((user, i) => {
+          if (user.id == _contact.number) {
+            bool = true;
+          }
+        });
+        if (!bool) {
+          coolDown(msg);
+        }
+      }
     }
+    
+   
     let state = await isBanned(msg);
     if (
       msg.body == "!h" ||
@@ -620,9 +641,9 @@ const {
       }
     } else if (msg.body == "!wallet") {
       if (!state) {
-       setTimeout(()=>{
-        wallet(msg);
-       },1500)
+        setTimeout(() => {
+          wallet(msg);
+        }, 1500);
         //add exp
         db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
@@ -684,9 +705,9 @@ const {
     } else if (msg.body.startsWith("!slot ")) {
       if (!state) {
         const amount = parseInt(msg.body.slice("!slot ".length));
-        setTimeout(()=>{
+        setTimeout(() => {
           slot(msg, amount);
-        }, 3500)
+        }, 3500);
         //add exp
         db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
@@ -697,7 +718,7 @@ const {
           }
         });
       }
-    }else if(msg.body.startsWith('!withdraw ')){
+    } else if (msg.body.startsWith("!withdraw ")) {
       if (!state) {
         const amount = parseInt(msg.body.slice("!withdraw ".length));
         withdraw(msg, amount);
