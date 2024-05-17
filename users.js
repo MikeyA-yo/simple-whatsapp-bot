@@ -72,6 +72,7 @@ async function updateUser(m, val, db) {
     if (user.userId == id) {
       db[i].userExp = userExp;
       db[i].banState = banState;
+      return;
     }
   });
   let data = JSON.stringify(db);
@@ -121,9 +122,8 @@ async function isBanned(m) {
 }
 async function BanUser(number) {
   let db = JSON.parse(fs.readFileSync("usersdb.json"));
-  let id = number;
   db.forEach((user, i) => {
-    if (user.userId == id) {
+    if (user.userId == number) {
       db[i].userExp = 0;
       db[i].banState = true;
     }
@@ -144,8 +144,8 @@ async function unBanUser(number) {
   fs.writeFileSync("usersdb.json", data);
 }
 async function LeaderBoard(m) {
+  const db = JSON.parse(fs.readFileSync("usersdb.json"));
   if (!m.body.includes("-")) {
-    const db = JSON.parse(fs.readFileSync("usersdb.json"));
     db.sort((a, b) => {
       return b.userExp - a.userExp;
     });
