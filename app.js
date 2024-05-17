@@ -457,7 +457,7 @@ const { coolDown, checkUserCool } = require("./cooldown");
     } else if (msg.body.startsWith("!video")) {
       let name = msg.body.slice("!video".length);
       if (msg.body.length == "!video".length) {
-        msg.reply("nice try user and your worng usage");
+        msg.reply("nice try user and your wrong usage");
       } else {
         try {
           video(msg, name);
