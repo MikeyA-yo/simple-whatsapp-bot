@@ -26,7 +26,7 @@ async function checkUserCool(m) {
   let bool;
   db.forEach((cool, i) => {
     if (cool.id == id) {
-      if (cool.lastSec - now >= 10 || now - cool.lastSec >= 10) {
+      if (cool.lastSec - now >= 5 || now - cool.lastSec >= 5) {
         bool = true;
         db[i].lastSec = now;
       } else {

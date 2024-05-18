@@ -84,7 +84,7 @@ async function wallet(m) {
 }
 async function deposit(m, amount) {
   const db = JSON.parse(fs.readFileSync("wallets.json"));
-  if(amount == NaN)  return;
+  if (amount == NaN) return;
   let contact = await m.getContact();
   let id = contact.number;
   db.forEach((user, i) => {
@@ -126,7 +126,7 @@ async function slot(m, amount) {
   let id = contact.number;
   const emojis = ["💈", "🥇", "🎟", "🎲", "❄", "🔥"];
   let slotArr = [];
-  if( amount > 6354664570822501000000n){
+  if (amount > 6354664570822501000000n) {
     m.reply(`This is New Slot's limit, reduce volume`);
     return;
   }
@@ -141,50 +141,63 @@ async function slot(m, amount) {
   const machine = new SlotMachine(3, slotArr);
   const res = machine.play();
   let text = `🧧✨Slot Machine✨🧧\n\n${res.visualize()}`;
-  let points = res.totalPoints + randomInt(90,150)
+  let points = res.totalPoints + randomInt(90, 150);
   let amountWon =
-    points > 200
-      ? amount * 9
-      : points > 100
-      ? amount * 3
-      : -amount;
+    points > 200 ? amount * 9 : points > 100 ? amount * 3 : -amount;
   db.forEach((wal, i) => {
     if (wal.id == id) {
-       if (wal.wallet < amount){
-        m.reply(`your account is so low`)
-       }else{
+      if (wal.wallet < amount) {
+        m.reply(`your account is so low`);
+      } else {
         db[i].wallet += amountWon;
         text += `\n\n🎗🎲🎰You ${
           amountWon > amount ? "won" : "lost"
         } ${amountWon}🎗🎲🎰`;
         m.reply(text);
-       }
+      }
       return;
     }
   });
   let data = JSON.stringify(db);
   fs.writeFileSync("wallets.json", data);
 }
-async function withdraw(m, amount){
-    const db = JSON.parse(fs.readFileSync("wallets.json"));
+async function withdraw(m, amount) {
+  const db = JSON.parse(fs.readFileSync("wallets.json"));
+  let contact = await m.getContact();
+  let id = contact.number;
+  db.forEach((user, i) => {
+    if (user.id == id) {
+      if (amount > user.bank) {
+        m.reply("nigga you're broke your balance ain't enough for this");
+      } else {
+        db[i].wallet += amount;
+        db[i].bank -= amount;
+        m.reply(
+          `You have withdrawn ${amount} from your bank\n💸Balance: ${db[i].wallet}`
+        );
+      }
+      return;
+    }
+  });
+
+  let data = JSON.stringify(db);
+  fs.writeFileSync("wallets.json", data);
+}
+async function give(m, reciever, amount){
     let contact = await m.getContact();
     let id = contact.number;
-    db.forEach((user, i) => {
-      if (user.id == id) {
-        if (amount > user.bank) {
-          m.reply("nigga you're broke your balance ain't enough for this");
-        } else {
-          db[i].wallet += amount;
-          db[i].bank -= amount;
-          m.reply(
-            `You have withdrawn ${amount} from your bank\n💸Balance: ${db[i].wallet}`
-          );
+    const db = JSON.parse(fs.readFileSync("wallets.json"));
+    db.forEach((user, i)=>{
+        if(user.id == id){
+           db[i].wallet -= amount;
         }
-        return;
-      }
-    });
-  
+        if(user.id == reciever){
+            db[i].wallet += amount
+        }
+        
+    })
+    m.reply(` i think this transaction was successful`)
     let data = JSON.stringify(db);
     fs.writeFileSync("wallets.json", data);
 }
-module.exports = { createWallet, daily, wallet, deposit, bank, slot, withdraw };
+module.exports = { createWallet, daily, wallet, deposit, bank, slot, withdraw, give };
