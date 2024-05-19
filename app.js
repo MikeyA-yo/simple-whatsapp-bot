@@ -23,17 +23,18 @@ const {
   bank,
   slot,
   withdraw,
+  give,
 } = require("./economy");
 const { coolDown, checkUserCool } = require("./cooldown");
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
-  const browser = await puppeteer.launch({
-    executablePath:
-      "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
-  });
+  // const browser = await puppeteer.launch({
+  //   executablePath:
+  //     "C:\\Program Files\\Google\\Chrome\\Application\\chrome.exe",
+  // });
 
   const { Client, LocalAuth } = require("whatsapp-web.js");
-  const { GroupChat } = require("whatsapp-web.js");
+  //const { GroupChat } = require("whatsapp-web.js");
   const qrcode = require("qrcode-terminal");
   const { lengthWords } = require("./word");
   const { menu, say, generateMenu } = require("./menu");
@@ -723,6 +724,26 @@ const { coolDown, checkUserCool } = require("./cooldown");
       if (!state) {
         const amount = parseInt(msg.body.slice("!withdraw ".length));
         withdraw(msg, amount);
+        //add exp
+        db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = user.userExp + 9;
+            let banState = false;
+            updateUser(msg, { userExp, banState }, db);
+            return;
+          }
+        });
+      } else {
+        msg.reply(
+          "i'm tired of forming messages for banned people, this is likely the last one"
+        );
+      }
+    }else if(msg.body.startsWith('!give')){
+      if (!state) {
+        let chat = await msg.getChat();
+        const amount = parseInt(msg.body.split(" ")[1]);
+        const number = removeFunc(msg.body.split(" ")[2], chat);
+        give(msg, number, amount );
         //add exp
         db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
