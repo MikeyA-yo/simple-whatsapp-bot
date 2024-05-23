@@ -19,18 +19,19 @@ async function coreGame(p1, p2, m, m1, m2, game) {
     j++;
   });
   do {
-     game = start();
+    //  game = start();
     m.reply(text);
   } while (i != 1);
   // while(!currentGame.isFinished){
-  if (!isNaN(m1) && m1 >= 1) {
+  if (!isNaN(m2) && m2 >= 1) {
     game.move("x", m1);
     moves.push(game.toString());
+    console.log(game)
    chat.sendMessage(`${game.toString()}\n\n your turn @${p2}`, {
       mentions: [`${p2}@c.us`],
     });
   }
-  if (!isNaN(m2) && m2 >= 1) {
+  if (!isNaN(m1) && m1 >= 1) {
     game.move("o", m2);
     moves.push(game.toString());
     chat.sendMessage(`${game.toString()}\n\n your turn @${p1}`, {

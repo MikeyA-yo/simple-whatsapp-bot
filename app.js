@@ -809,7 +809,6 @@ let gameInstance;
       } else if (args[1] == "guess") {
         if (hangman.get("player") == person.number) {
            guess(msg, args[2], hangman.get("gameI"));
-          console.log( gameInstance);
           hangman.set("gameI", gameInstance);
            //add exp
         db.forEach(async (user, i) => {
