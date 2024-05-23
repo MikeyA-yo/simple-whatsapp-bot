@@ -1,63 +1,64 @@
 const menu = [
-  '\n━━━❰ General ❱━━━\n\n',
-  '!m',
-  '!sticker',
+  "\n━━━❰ General ❱━━━\n\n",
+  "!m",
+  "!sticker",
   "!sticker-g",
-  '!everyone',
-  '!wordlength',
-  '!invite',
-  '!ping',
-  '!type',
-  '!play',
-  '!video',
-  '!audio',
-  '!ytv',
-  '!yta',
-  '!invite',
-  '!profile',
-  '!leaderboard',
-  '!wallet',
-  '!daily',
-  '!slot',
-  '!withdraw',
-  '!deposit',
-  '!hangman',
-  '\n\n━━━❰ Owner ❱━━━\n\n',
-  '!leave',
-  '!join',
-  '!add',
-  '!delete',
-  '!remove',
-  '!remove-all',
-  '!off',
-  '!demote',
-  '!promote',
-  '!ban',
-  '!unban',
-  '\n\n━━━❰ Info ❱━━━\n\n',
-  '!info',
-  '!groupinfo',
-]
-function say(a){
-let b =  a.slice(10);
-return b;
+  "!everyone",
+  "!wordlength",
+  "!invite",
+  "!ping",
+  "!type",
+  "!play",
+  "!video",
+  "!audio",
+  "!ytv",
+  "!yta",
+  "!invite",
+  "!profile",
+  "!leaderboard",
+  "!wallet",
+  "!daily",
+  "!slot",
+  "!withdraw",
+  "!deposit",
+  "!hangman",
+  "!ttt",
+  "\n\n━━━❰ Owner ❱━━━\n\n",
+  "!leave",
+  "!join",
+  "!add",
+  "!delete",
+  "!remove",
+  "!remove-all",
+  "!off",
+  "!demote",
+  "!promote",
+  "!ban",
+  "!unban",
+  "\n\n━━━❰ Info ❱━━━\n\n",
+  "!info",
+  "!groupinfo",
+];
+function say(a) {
+  let b = a.slice(10);
+  return b;
 }
-function generateMenu(){
-let commands = '';
-menu.forEach(t =>{
-  commands += t
-  commands += ' 𖣘  '
-})
-let text = `
+function generateMenu() {
+  let commands = "";
+  menu.forEach((t) => {
+    commands += t;
+    commands += " 𖣘  ";
+  });
+  let text = `
 This help menu is designed to help you get started with the bot\n
 ⟾ 📪 Command list 📪
 ${commands}\n
 made with ❤ by Ayomide(Mikey)
-`
-return text;
+`;
+  return text;
 }
-module.exports={
+module.exports = {
   menu,
   say,
-  generateMenu
-}
+  generateMenu,
+};

@@ -38,11 +38,31 @@ async function coreGame(p1, p2, m, m1, m2, game) {
       return true;
     }
   }
+  function finish(){
+    if (game.isFinished()) {
+      if (game.winner == "O") {
+        chat.sendMessage(`@${p2} won this round`,{
+          mentions: [`${p2}@c.us`],
+        });
+        return true;
+      } else if (game.winner == "X") {
+        chat.sendMessage(`@${p1} won this round`, {
+          mentions: [`${p1}@c.us`],
+        });
+        return true;
+      } else {
+        m.reply(`draw ig`);
+        return true;
+      }
+    }
+  }
   // while(!currentGame.isFinished){
   if (!isNaN(m1) && m1 >= 1) {
     game.move("x", m1);
     moves.push(game.toString());
-    console.log(game)
+    if (game.isFinished()){
+      return finish()
+    }
    chat.sendMessage(`${game.toString()}\n\n your turn @${p2}`, {
       mentions: [`${p2}@c.us`],
     });
@@ -50,6 +70,9 @@ async function coreGame(p1, p2, m, m1, m2, game) {
   if (!isNaN(m2) && m2 >= 1) {
     game.move("o", m2);
     moves.push(game.toString());
+    if (game.isFinished()){
+      return finish()
+    }
     chat.sendMessage(`${game.toString()}\n\n your turn @${p1}`, {
       mentions: [`${p1}@c.us`],
     });

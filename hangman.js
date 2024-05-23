@@ -17,7 +17,7 @@ async function startHangman(m){
     let word = await guessWord();
     const game = new Game(word, {
         concealCharacter: '_',
-        maxAttempt: 6
+        maxAttempt: 12
       })
       
       return game;
