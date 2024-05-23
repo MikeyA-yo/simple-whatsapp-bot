@@ -12,13 +12,28 @@ async function guessWord() {
   return word;
 }
 
-async function start(m){
+async function startHangman(m){
     m.reply(`You are about to start a guessing Game.`);
     let word = await guessWord();
     const game = new Game(word, {
-        concealCharacter: '*',
+        concealCharacter: '_',
         maxAttempt: 6
       })
       
       return game;
 }
+async function guess(m, guess, game){
+    
+   if(game.status == 'IN_PROGRESS'){
+    game.guess(guess);
+    m.reply(game.hiddenWord.join(""));
+    if(!game.hiddenWord.join("").includes('_')) m.reply('You Won')
+    return game;
+   }else if(game.status == 'WON'){
+    m.reply(`You have won`)
+   }
+   else{
+    m.reply('no game in progress/ or you lost i am tired of adding conditionals')
+   }
+}
+module.exports = {startHangman, guess}

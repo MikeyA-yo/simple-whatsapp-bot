@@ -144,7 +144,7 @@ Game.prototype.guess = function guess(char) {
     this.status = 'LOST';
   }
 
-  if (this.hiddenWord.indexOf('_') === -1) {
+  if (this.hiddenWord.indexOf(this.config.concealCharacter) === -1) {
     this.status = 'WON';
   }
 

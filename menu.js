@@ -21,6 +21,7 @@ const menu = [
   '!slot',
   '!withdraw',
   '!deposit',
+  '!hangman',
   '\n\n━━━❰ Owner ❱━━━\n\n',
   '!leave',
   '!join',

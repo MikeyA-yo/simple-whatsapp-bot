@@ -27,9 +27,11 @@ const {
 } = require("./economy");
 const { coolDown, checkUserCool } = require("./cooldown");
 const { start, coreGame, game } = require("./tictactoe");
+const { startHangman, guess } = require("./hangman");
 let currentGame;
 let players = new Map();
-
+let hangman = new Map();
+let gameInstance;
 //browserWSEndpoint: await browser.wsEndpoint()
 (async () => {
   // const browser = await puppeteer.launch({
@@ -84,23 +86,23 @@ let players = new Map();
     const walletDb = JSON.parse(fs.readFileSync("./wallets.json"));
     const coolDb = JSON.parse(fs.readFileSync("cooldown.json"));
     let _contact = await msg.getContact();
-    
+
     if (msg.body.startsWith("!")) {
-        //create cool down
-        if (true) {
-          let bool;
-          coolDb.forEach((user, i) => {
-            if (user.id == _contact.number) {
-              bool = true;
-            }
-          });
-          if (!bool) {
-            coolDown(msg);
+      //create cool down
+      if (true) {
+        let bool;
+        coolDb.forEach((user, i) => {
+          if (user.id == _contact.number) {
+            bool = true;
           }
+        });
+        if (!bool) {
+          coolDown(msg);
         }
+      }
       await msg.react("😁");
       let cooled = await checkUserCool(msg);
-      if(!cooled){
+      if (!cooled) {
         msg.reply("you're on a cooldown");
         return;
       }
@@ -126,10 +128,8 @@ let players = new Map();
           createWallet(msg);
         }
       }
-    
     }
-    
-   
+
     let state = await isBanned(msg);
     if (
       msg.body == "!h" ||
@@ -743,12 +743,12 @@ let players = new Map();
           "i'm tired of forming messages for banned people, this is likely the last one"
         );
       }
-    }else if(msg.body.startsWith('!give')){
+    } else if (msg.body.startsWith("!give")) {
       if (!state) {
         let chat = await msg.getChat();
         const amount = parseInt(msg.body.split(" ")[1]);
         const number = removeFunc(msg.body.split(" ")[2], chat);
-        give(msg, number, amount );
+        give(msg, number, amount);
         //add exp
         db.forEach(async (user, i) => {
           if (user.userId == _contact.number) {
@@ -763,30 +763,67 @@ let players = new Map();
           "i'm tired of forming messages for banned people, this is likely the last one"
         );
       }
-    }else if(msg.body.startsWith('!ttt')){
+    } else if (msg.body.startsWith("!ttt")) {
       const args = msg.body.split(" ");
-      const current = _contact.number
+      const current = _contact.number;
       const chat = await msg.getChat();
       const mentions = await msg.getMentions();
-      if(args[1] == "start"){
+      if (args[1] == "start") {
         const player = removeFunc(args[2], chat);
-        players.set("player", current)
-        players.set("challenger", player)
+        players.set("player", current);
+        players.set("challenger", player);
         chat.sendMessage(`You have started a game, @${player}`, {
-          mentions:[player +'@c.us']
-        })
-         currentGame = start();
-      }else if(!isNaN(Number(args[1]) )){
-        if(current == players.get('player')){
-          coreGame(players.get('player'),players.get('challenger'), msg, NaN, Number(args[1]), currentGame)
-        }else if(current == players.get('challenger')){
-          coreGame(players.get('player'),players.get('challenger'), msg,Number(args[1]), NaN, currentGame )
-        }else{
-          msg.reply('i feel i wrote bugs, but you can not play')
+          mentions: [player + "@c.us"],
+        });
+        currentGame = start();
+      } else if (!isNaN(Number(args[1]))) {
+        if (current == players.get("player")) {
+          coreGame(
+            players.get("player"),
+            players.get("challenger"),
+            msg,
+            NaN,
+            Number(args[1]),
+            currentGame
+          );
+        } else if (current == players.get("challenger")) {
+          coreGame(
+            players.get("player"),
+            players.get("challenger"),
+            msg,
+            Number(args[1]),
+            NaN,
+            currentGame
+          );
+        } else {
+          msg.reply("i feel i wrote bugs, but you can not play");
         }
       }
-    }else if(msg.body.startsWith('!hangman')){
-      const args = msg.body.split(" ")
+    } else if (msg.body.startsWith("!hangman")) {
+      const args = msg.body.split(" ");
+      const person = await msg.getContact();
+      if (args[1] == "start") {
+        gameInstance = await startHangman(msg);
+        hangman.set("player", person.number);
+        hangman.set("gameI", gameInstance);
+      } else if (args[1] == "guess") {
+        if (hangman.get("player") == person.number) {
+           guess(msg, args[2], hangman.get("gameI"));
+          console.log( gameInstance);
+          hangman.set("gameI", gameInstance);
+           //add exp
+        db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = user.userExp + 15;
+            let banState = false;
+            updateUser(msg, { userExp, banState }, db);
+            return;
+          }
+        });
+        } else {
+          msg.reply("you're not the player");
+        }
+      }
     }
   });
   client.on("group_join", async (notification) => {
