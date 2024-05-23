@@ -200,4 +200,4 @@ async function give(m, reciever, amount){
     let data = JSON.stringify(db);
     fs.writeFileSync("wallets.json", data);
 }
-module.exports = { createWallet, daily, wallet, deposit, bank, slot, withdraw, give };
+module.exports = { createWallet, daily, wallet, deposit, bank, slot, withdraw, give, randomInt };
