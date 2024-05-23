@@ -782,8 +782,8 @@ let gameInstance;
             players.get("player"),
             players.get("challenger"),
             msg,
-            NaN,
             Number(args[1]),
+            NaN,
             currentGame
           );
         } else if (current == players.get("challenger")) {
@@ -791,13 +791,22 @@ let gameInstance;
             players.get("player"),
             players.get("challenger"),
             msg,
-            Number(args[1]),
             NaN,
+            Number(args[1]),
             currentGame
           );
         } else {
-          msg.reply("i feel i wrote bugs, but you can not play");
+          msg.reply("you can not play");
         }
+        //add exp
+        db.forEach(async (user, i) => {
+          if (user.userId == _contact.number) {
+            let userExp = user.userExp + 19;
+            let banState = false;
+            updateUser(msg, { userExp, banState }, db);
+            return;
+          }
+        });
       }
     } else if (msg.body.startsWith("!hangman")) {
       const args = msg.body.split(" ");
@@ -807,18 +816,26 @@ let gameInstance;
         hangman.set("player", person.number);
         hangman.set("gameI", gameInstance);
       } else if (args[1] == "guess") {
+        if (args.length !== 3) {
+          msg.reply("not today, usage: !hangman guess [letter]");
+          return;
+        }
+        if (args[2].length != 1) {
+          msg.reply("not today, usage: !hangman guess [letter]");
+          return;
+        }
         if (hangman.get("player") == person.number) {
-           guess(msg, args[2], hangman.get("gameI"));
+          guess(msg, args[2], hangman.get("gameI"));
           hangman.set("gameI", gameInstance);
-           //add exp
-        db.forEach(async (user, i) => {
-          if (user.userId == _contact.number) {
-            let userExp = user.userExp + 15;
-            let banState = false;
-            updateUser(msg, { userExp, banState }, db);
-            return;
-          }
-        });
+          //add exp
+          db.forEach(async (user, i) => {
+            if (user.userId == _contact.number) {
+              let userExp = user.userExp + 15;
+              let banState = false;
+              updateUser(msg, { userExp, banState }, db);
+              return;
+            }
+          });
         } else {
           msg.reply("you're not the player");
         }

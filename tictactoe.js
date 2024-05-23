@@ -22,23 +22,6 @@ async function coreGame(p1, p2, m, m1, m2, game) {
     //  game = start();
     m.reply(text);
   } while (i != 1);
-  // while(!currentGame.isFinished){
-  if (!isNaN(m2) && m2 >= 1) {
-    game.move("x", m1);
-    moves.push(game.toString());
-    console.log(game)
-   chat.sendMessage(`${game.toString()}\n\n your turn @${p2}`, {
-      mentions: [`${p2}@c.us`],
-    });
-  }
-  if (!isNaN(m1) && m1 >= 1) {
-    game.move("o", m2);
-    moves.push(game.toString());
-    chat.sendMessage(`${game.toString()}\n\n your turn @${p1}`, {
-      mentions: [`${p1}@c.us`],
-    });
-  }
-  //}
   if (game.isFinished()) {
     if (game.winner == "O") {
       chat.sendMessage(`@${p2} won this round`,{
@@ -55,6 +38,24 @@ async function coreGame(p1, p2, m, m1, m2, game) {
       return true;
     }
   }
+  // while(!currentGame.isFinished){
+  if (!isNaN(m1) && m1 >= 1) {
+    game.move("x", m1);
+    moves.push(game.toString());
+    console.log(game)
+   chat.sendMessage(`${game.toString()}\n\n your turn @${p2}`, {
+      mentions: [`${p2}@c.us`],
+    });
+  }
+  if (!isNaN(m2) && m2 >= 1) {
+    game.move("o", m2);
+    moves.push(game.toString());
+    chat.sendMessage(`${game.toString()}\n\n your turn @${p1}`, {
+      mentions: [`${p1}@c.us`],
+    });
+  }
+  //}
+
 }
 function movesB() {
   return moves;
