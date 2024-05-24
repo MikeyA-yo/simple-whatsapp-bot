@@ -27,13 +27,14 @@ async function guess(m, guess, game){
    if(game.status == 'IN_PROGRESS'){
     game.guess(guess);
     m.reply(game.hiddenWord.join(""));
+    console.log(game)
     if(!game.hiddenWord.join("").includes('_')) m.reply('You Won')
     return game;
    }else if(game.status == 'WON'){
     m.reply(`You have won`)
    }
    else{
-    m.reply('no game in progress/ or you lost i am tired of adding conditionals')
+    m.reply(`You Lost: ${game.revealHiddenWord()}`)
    }
 }
 module.exports = {startHangman, guess}

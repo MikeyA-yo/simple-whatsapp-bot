@@ -156,7 +156,7 @@ Game.prototype.guess = function guess(char) {
  */
 Game.prototype.revealHiddenWord = function revealHiddenWord() {
   this.hiddenWord = this.charactersMap;
-  return this;
+  return this.charactersMap;
 };
 
 var Game_1 = Game;

@@ -14,13 +14,13 @@ const menu = [
   "!ytv",
   "!yta",
   "!invite",
-  "!profile",
-  "!leaderboard",
+  "\n\n━━━❰ Economy ❱━━━\n\n",
   "!wallet",
   "!daily",
   "!slot",
-  "!withdraw",
+  "!withdraw",  
   "!deposit",
+  "\n\n━━━❰ Games ❱━━━\n\n",
   "!hangman",
   "!ttt",
   "\n\n━━━❰ Owner ❱━━━\n\n",
@@ -38,7 +38,10 @@ const menu = [
   "\n\n━━━❰ Info ❱━━━\n\n",
   "!info",
   "!groupinfo",
+  "!profile",
+  "!leaderboard",
 ];
+
 function say(a) {
   let b = a.slice(10);
   return b;

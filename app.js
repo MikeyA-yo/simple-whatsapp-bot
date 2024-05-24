@@ -776,8 +776,9 @@ let gameInstance;
           mentions: [player + "@c.us"],
         });
         currentGame = start();
+        players.set("turn", "player")
       } else if (!isNaN(Number(args[1]))) {
-        if (current == players.get("player")) {
+        if (current == players.get("player") && players.get("turn") == "player") {
           coreGame(
             players.get("player"),
             players.get("challenger"),
@@ -786,7 +787,8 @@ let gameInstance;
             NaN,
             currentGame
           );
-        } else if (current == players.get("challenger")) {
+          players.set("turn", "challenger")
+        } else if (current == players.get("challenger") && players.get("turn") == "challenger") {
           coreGame(
             players.get("player"),
             players.get("challenger"),
@@ -795,8 +797,9 @@ let gameInstance;
             Number(args[1]),
             currentGame
           );
+          players.set("turn", "player")
         } else {
-          msg.reply("you can not play");
+          msg.reply("you can not play / not your turn, adding conditionals late is work");
         }
         //add exp
         db.forEach(async (user, i) => {
