@@ -765,10 +765,12 @@ let gameInstance;
       }
     } else if (msg.body.startsWith("!ttt")) {
       const args = msg.body.split(" ");
+      
       const current = _contact.number;
       const chat = await msg.getChat();
       const mentions = await msg.getMentions();
       if (args[1] == "start") {
+        if (args.length < 3 || !args[2].includes('@')){msg.reply("Not today, usage: !ttt start @user"); return}
         const player = removeFunc(args[2], chat);
         players.set("player", current);
         players.set("challenger", player);

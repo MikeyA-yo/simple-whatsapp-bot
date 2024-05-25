@@ -27,7 +27,6 @@ async function guess(m, guess, game){
    if(game.status == 'IN_PROGRESS'){
     game.guess(guess);
     m.reply(game.hiddenWord.join(""));
-    console.log(game)
     if(!game.hiddenWord.join("").includes('_')) m.reply('You Won')
     return game;
    }else if(game.status == 'WON'){
