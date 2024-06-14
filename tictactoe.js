@@ -15,7 +15,7 @@ async function coreGame(p1, p2, m, m1, m2, game) {
       text += `\n`;
       j = 0;
     }
-    text += `|${no}`;
+    text += `${no}|`;
     j++;
   });
   do {
