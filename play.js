@@ -1,4 +1,4 @@
-const yt = require('ytdl-core');
+const yt = require('@distube/ytdl-core');
 const yts = require('yt-search')
 const fs = require('fs');
 const { MessageMedia } = require('whatsapp-web.js');
